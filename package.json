@@ -23,7 +23,9 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "react-day-picker": "^8.9.1",
-    "recharts": "^2.10.3"
+    "recharts": "^2.10.3",
+    "class-variance-authority": "^0.7.0",
+    "@radix-ui/react-slot": "^2.0.1"
   },
   "devDependencies": {
     "@tanstack/router-plugin": "^1.168.7",

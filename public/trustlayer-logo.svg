@@ -1,0 +1,39 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E40AF;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <!-- Shield Background -->
+  <path d="M 100 20 L 160 45 L 160 95 C 160 140 100 180 100 180 C 100 180 40 140 40 95 L 40 45 Z" 
+        fill="url(#shieldGradient)" 
+        filter="url(#shadow)"/>
+  
+  <!-- Shield Outline -->
+  <path d="M 100 20 L 160 45 L 160 95 C 160 140 100 180 100 180 C 100 180 40 140 40 95 L 40 45 Z" 
+        fill="none" 
+        stroke="#1E40AF" 
+        stroke-width="2"/>
+  
+  <!-- Inner Circle -->
+  <circle cx="100" cy="100" r="45" fill="#DBEAFE" opacity="0.3"/>
+  
+  <!-- TR Text -->
+  <text x="100" y="115" 
+        font-family="Arial, sans-serif" 
+        font-size="56" 
+        font-weight="bold" 
+        text-anchor="middle"
+        fill="#FFFFFF">TR</text>
+  
+  <!-- Accent Line -->
+  <line x1="70" y1="70" x2="130" y2="70" 
+        stroke="#60A5FA" 
+        stroke-width="2" 
+        opacity="0.6"/>
+</svg>

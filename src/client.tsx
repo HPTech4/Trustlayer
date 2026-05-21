@@ -8,6 +8,6 @@ const router = getRouter()
 hydrateRoot(
     document,
     <StrictMode>
-        <StartClient router ={router} />   
+        <StartClient router={router} />   
     </StrictMode>
 )
