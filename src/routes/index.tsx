@@ -27,7 +27,7 @@ function Landing() {
 
       <main className="mx-auto max-w-3xl px-6 pt-24 pb-32 text-center">
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-accent/40 px-3 py-1 text-xs text-accent-foreground">
-          <span className="h-1.5 w-1.5 rounded-full bg-success" /> Powered by Gemini 2.5
+          <span className="h-1.5 w-1.5 rounded-full bg-success" /> Powered by Gemini 3 Flash
         </div>
         <h1 className="text-balance text-5xl font-semibold tracking-tight text-foreground sm:text-6xl">
           Score trust. Surface risk. Instantly.

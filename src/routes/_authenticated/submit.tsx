@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import { analyzeSubmission } from "@/lib/analysis.functions";
 import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";
@@ -11,7 +10,6 @@ export const Route = createFileRoute("/_authenticated/submit")({
 
 function SubmitPage() {
   const navigate = useNavigate();
-  const analyze = useServerFn(analyzeSubmission);
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +20,7 @@ function SubmitPage() {
     }
     setLoading(true);
     try {
-      const { submissionId } = await analyze({ data: { inputText: text.trim() } });
+      const { submissionId } = await analyzeSubmission({ inputText: text.trim() });
       toast.success("Analysis complete");
       navigate({ to: "/results/$id", params: { id: submissionId } });
     } catch (e) {

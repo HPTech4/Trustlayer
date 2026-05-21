@@ -1,6 +1,5 @@
-import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabase } from "@/integrations/supabase/client";
 
 const InputSchema = z.object({ inputText: z.string().min(10).max(5000) });
 
@@ -11,11 +10,11 @@ interface AIResult {
 }
 
 async function callAI(inputText: string): Promise<AIResult> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) throw new Error("Gemini API key not configured");
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -61,36 +60,37 @@ async function callAI(inputText: string): Promise<AIResult> {
   };
 }
 
-export const analyzeSubmission = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => InputSchema.parse(input))
-  .handler(async ({ data, context }: { data: typeof InputSchema._type; context: any }) => {
-    const { supabase, userId } = context;
+export async function analyzeSubmission(inputData: unknown): Promise<{ submissionId: string }> {
+  // Validate input
+  const data = InputSchema.parse(inputData);
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) throw new Error("Gemini API key not configured");
+  // Get current user
+  const { data: session } = await supabase.auth.getSession();
+  if (!session?.session) throw new Error("Unauthorized");
+  const userId = session.session.user.id;
 
-    const { data: sub, error: insErr } = await supabase
-      .from("submissions")
-      .insert({ user_id: userId, input_text: data.inputText, status: "pending" })
-      .select()
-      .single();
-    if (insErr || !sub) throw new Error(insErr?.message ?? "Could not create submission");
+  // Create pending submission
+  const { data: sub, error: insErr } = await supabase
+    .from("submissions")
+    .insert({ user_id: userId, input_text: data.inputText, status: "pending" })
+    .select()
+    .single();
+  if (insErr || !sub) throw new Error(insErr?.message ?? "Could not create submission");
 
-    try {
-      const ai = await callAI(data.inputText);
-      const { error: rErr } = await supabase.from("results").insert({
-        submission_id: sub.id,
-        trust_score: ai.trust_score,
-        risk_level: ai.risk_level,
-        explanation: ai.explanation,
-      });
-      if (rErr) throw rErr;
-      const { error: updateErr } = await supabase.from("submissions").update({ status: "completed" }).eq("id", sub.id);
-      if (updateErr) throw updateErr;
-      return { submissionId: sub.id };
-    } catch (e) {
-      await supabase.from("submissions").update({ status: "failed" }).eq("id", sub.id);
-      throw e instanceof Error ? e : new Error("Analysis failed");
-    }
-  });
+  try {
+    const ai = await callAI(data.inputText);
+    const { error: rErr } = await supabase.from("results").insert({
+      submission_id: sub.id,
+      trust_score: ai.trust_score,
+      risk_level: ai.risk_level,
+      explanation: ai.explanation,
+    });
+    if (rErr) throw rErr;
+    const { error: updateErr } = await supabase.from("submissions").update({ status: "completed" }).eq("id", sub.id);
+    if (updateErr) throw updateErr;
+    return { submissionId: sub.id };
+  } catch (e) {
+    await supabase.from("submissions").update({ status: "failed" }).eq("id", sub.id);
+    throw e instanceof Error ? e : new Error("Analysis failed");
+  }
+}
