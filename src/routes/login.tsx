@@ -44,44 +44,82 @@ function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 flex flex-col items-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <Shield className="h-5 w-5" />
+    <div className="flex min-h-screen items-center justify-center px-4" style={{backgroundColor: '#F4F6FB'}}>
+      <div className="w-full max-w-sm animate-slide-up">
+        <div className="mb-8 flex flex-col items-center rounded-xl p-8" style={{backgroundColor: '#FFFFFF', border: '1px solid #E4E9F2'}}>
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg" style={{backgroundColor: '#4F46E5'}}>
+            <Shield className="h-6 w-6 text-white" />
           </div>
-          <h1 className="mt-4 text-xl font-semibold tracking-tight">TrustLayer</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h1 className="mt-4 text-2xl font-bold brand-name" style={{color: '#0F172A'}}>TrustLayer</h1>
+          <p className="mt-2 text-sm" style={{color: '#9AA3B8'}}>
             {mode === "signin" ? "Sign in to your account" : "Create an account"}
           </p>
         </div>
 
-        <form onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-card p-6">
+        <form onSubmit={submit} className="space-y-4 rounded-xl p-8" style={{backgroundColor: '#FFFFFF', border: '1px solid #E4E9F2'}}>
           <div>
-            <label className="text-xs font-medium text-foreground/80">Email</label>
+            <label className="form-label">Email</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-ring focus:ring-2"
+              className="mt-2 w-full rounded-lg px-4 py-3 text-sm outline-none transition-smooth"
+              style={{
+                backgroundColor: '#F8F9FC',
+                border: '1px solid #E4E9F2',
+                color: '#0F172A'
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#4F46E5';
+                e.currentTarget.style.backgroundColor = '#FFFFFF';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = '#E4E9F2';
+                e.currentTarget.style.backgroundColor = '#F8F9FC';
+              }}
+              placeholder="you@example.com"
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-foreground/80">Password</label>
+            <label className="form-label">Password</label>
             <input
               type="password"
               required
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-ring focus:ring-2"
+              className="mt-2 w-full rounded-lg px-4 py-3 text-sm outline-none transition-smooth"
+              style={{
+                backgroundColor: '#F8F9FC',
+                border: '1px solid #E4E9F2',
+                color: '#0F172A'
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#4F46E5';
+                e.currentTarget.style.backgroundColor = '#FFFFFF';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = '#E4E9F2';
+                e.currentTarget.style.backgroundColor = '#F8F9FC';
+              }}
+              placeholder="••••••••"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+            className="mt-4 w-full rounded-lg px-4 py-3 text-sm font-semibold text-white transition-smooth"
+            style={{
+              backgroundColor: '#4F46E5',
+              opacity: loading ? 0.6 : 1
+            }}
+            onMouseEnter={(e) => {
+              if (!loading) e.currentTarget.style.backgroundColor = '#4338CA';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#4F46E5';
+            }}
           >
             {loading ? "Please wait..." : mode === "signin" ? "Sign in" : "Create account"}
           </button>
@@ -89,7 +127,10 @@ function LoginPage() {
 
         <button
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground"
+          className="mt-6 w-full text-center text-sm transition-smooth"
+          style={{color: '#9AA3B8'}}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#4F46E5'}
+          onMouseLeave={(e) => e.currentTarget.style.color = '#9AA3B8'}
         >
           {mode === "signin" ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
         </button>

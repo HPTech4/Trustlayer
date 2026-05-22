@@ -31,31 +31,53 @@ function SubmitPage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-8">
-      <h1 className="text-2xl font-semibold tracking-tight">New submission</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Describe a person, company, or transaction. TrustLayer will return a trust score, risk level, and explanation.
-      </p>
+    <div style={{backgroundColor: '#F4F6FB'}} className="min-h-screen px-6 py-8">
+      <div className="mx-auto max-w-3xl">
+        <div className="animate-slide-down">
+          <h1 className="text-3xl font-bold" style={{color: '#0F172A', fontFamily: "'Syne', sans-serif"}}>New submission</h1>
+          <p className="mt-2 text-sm" style={{color: '#9AA3B8'}}>
+            Describe a person, company, or transaction. TrustLayer will return a trust score, risk level, and explanation.
+          </p>
+        </div>
 
-      <div className="mt-6 rounded-xl border border-border bg-card p-5">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="e.g. A 3-month-old shell company headquartered in a low-tax jurisdiction requested a wire transfer of $48,000 from a new client invoice with no prior history…"
-          rows={12}
-          maxLength={5000}
-          className="w-full resize-none rounded-md border border-input bg-background p-3 text-sm leading-relaxed outline-none ring-ring focus:ring-2"
-        />
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-xs text-muted-foreground tabular-nums">{text.length} / 5000</span>
-          <button
-            onClick={submit}
-            disabled={loading || text.trim().length < 10}
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            {loading ? "Analyzing…" : "Analyze"}
-          </button>
+        <div className="mt-6 rounded-lg p-6 animate-slide-up" style={{backgroundColor: '#FFFFFF', border: '1px solid #E4E9F2'}}>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="e.g. A 3-month-old shell company headquartered in a low-tax jurisdiction requested a wire transfer of $48,000 from a new client invoice with no prior history…"
+            rows={12}
+            maxLength={5000}
+            className="w-full resize-none rounded-lg p-4 text-sm leading-relaxed outline-none transition-smooth"
+            style={{
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E4E9F2',
+              color: '#0F172A',
+              borderRadius: '12px'
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#4F46E5';
+              e.currentTarget.style.backgroundColor = '#FFFFFF';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = '#E4E9F2';
+              e.currentTarget.style.backgroundColor = '#FFFFFF';
+            }}
+          />
+          <div className="mt-4 flex items-center justify-between">
+            <span className="text-xs tabular-nums" style={{color: '#9AA3B8'}}>{text.length} / 5000</span>
+            <button
+              onClick={submit}
+              disabled={loading || text.trim().length < 10}
+              className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold text-white transition-smooth hover:scale-105"
+              style={{
+                backgroundColor: '#4F46E5',
+                opacity: loading || text.trim().length < 10 ? 0.6 : 1
+              }}
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {loading ? "Analyzing…" : "Analyze"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
