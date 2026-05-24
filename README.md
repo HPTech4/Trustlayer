@@ -262,7 +262,7 @@ https://github.com/yourusername/trustlayer/issues
 
 ### Community
 - 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/trustlayer/discussions)
-- 📧 Email: your-email@example.com
+- 📧 Email: alimiazeez400@gmail.com 
 
 ---
 
@@ -298,7 +298,7 @@ MIT License — See [LICENSE](./LICENSE) file
 
 ## 👤 **Author**
 
-Built by **[Your Name]**
+Built by **[Alimi Azeez Opeyemi]**
 
 **Acknowledgments:**
 - shadcn/ui for beautiful components
@@ -310,62 +310,6 @@ Built by **[Your Name]**
 **Happy coding! 🚀** For questions or feedback, open an issue or reach out directly.
 - Google Gemini API key
 
-### Installation
-
-```bash
-# Install dependencies (use legacy-peer-deps for compatibility)
-npm install --legacy-peer-deps
-
-# Start dev server
-npm run dev
-```
-
-### Environment Variables
-
-Create a `.env.local` file:
-
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_key
-GEMINI_API_KEY=your_gemini_api_key
-```
-
-### Database Setup
-
-Run migrations:
-
-```bash
-supabase db push
-```
-
-## Project Structure
-
-```
-src/
-├── routes/           # File-based routing (TanStack Router)
-│   ├── __root.tsx    # Root layout & providers
-│   ├── _authenticated/  # Protected route group
-│   ├── index.tsx     # Home / login page
-│   ├── login.tsx     # Auth page
-│   └── results.$id.tsx # Result details
-├── components/       # React components & UI
-├── hooks/            # Custom React hooks (useAuth, useMobile)
-├── lib/              # Utilities & helpers (analysis.functions, error handling)
-├── integrations/     # Supabase & external services
-├── client.tsx        # Client entry point (React hydration)
-├── router.tsx        # Router configuration
-└── styles.css        # Global styles & Tailwind theme
-```
-
-## Security Features
-
-- ✅ Row Level Security (RLS) on database tables (enforced at DB level)
-- ✅ User isolation on all queries (`.eq("user_id", user?.id)`)
-- ✅ Protected routes with auth context
-- ✅ Client-side auth with Supabase Session
-- ✅ Secure token handling (browser session storage)
-
-## Environment Variables
 
 Create `.env.local` in the root:
 
