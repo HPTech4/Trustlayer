@@ -10,7 +10,7 @@ interface AIResult {
 }
 
 async function callAI(inputText: string): Promise<AIResult> {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const apiKey = import.meta.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("Gemini API key not configured");
 
   const res = await fetch(
