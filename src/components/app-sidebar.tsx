@@ -81,21 +81,15 @@ export function AppSidebar() {
           <div className="truncate text-xs" style={{color: '#9AA3B8'}}>{user?.email}</div>
           <button
             onClick={() => signOut()}
-            className="mt-3 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-smooth"
+            className="mt-3 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-smooth animate-slide-down"
             style={{
-              backgroundColor: 'transparent',
-              border: '1px solid #E4E9F2',
-              color: '#6B7280',
-              borderRadius: '8px'
+              backgroundColor: '#9AA3B8',
+              color: 'black',
+              cursor: 'pointer'
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#F8F9FC';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+          
           >
-            <LogOut className="h-4 w-4" /> Sign out
+            <LogOut className="h-4 w-4 " /> Sign out
           </button>
         </div>
       </SidebarFooter>

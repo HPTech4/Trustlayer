@@ -9,8 +9,7 @@ RUN npm run build
 # Stage 2: Runtime
 FROM node:21-alpine
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --legacy-peer-deps --only=production
 COPY --from=builder /app/dist ./dist
+COPY server.mjs ./server.mjs
 EXPOSE 4000
-CMD ["npm", "run", "preview"]
+CMD ["node", "server.mjs"]
