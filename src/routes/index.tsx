@@ -39,7 +39,7 @@ export const Route = createFileRoute("/")({
 /* ----------------------------------------------------------------------- */
 
 const TECH_TRUST_ITEMS = [
-  { icon: Cpu, label: "Powered by Gemini 3 Flash" },
+  { icon: Cpu, label: "Powered by Gemini 3.5 Flash" },
   { icon: Lock, label: "Built on Supabase Row-Level Security" },
   { icon: Zap, label: "Real-time analysis" },
   { icon: ShieldCheck, label: "Encrypted at rest" },
@@ -71,12 +71,12 @@ const HOW_IT_WORKS_STEPS = [
   },
   {
     icon: Cpu,
-    title: "Gemini analyzes it",
+    title: "AI scan for pattern",
     desc: "Gemini 3 Flash checks it against known phishing and fraud patterns in real time.",
   },
   {
     icon: Gauge,
-    title: "Get your verdict",
+    title: "Get your risk report",
     desc: "A trust score, a risk level, and a plain-written explanation — back in seconds.",
   },
 ];
@@ -230,20 +230,20 @@ const FOOTER_LINKS: { heading: string; links: { label: string; href: string }[] 
   {
     heading: "Company",
     links: [
-      { label: "About", href: "/about" },
-      { label: "Contact", href: "/contact" },
+      { label: "About", href: "#" },
+      { label: "Contact", href: "#" },
     ],
   },
   {
     heading: "Legal",
     links: [
-      { label: "Privacy policy", href: "/privacy" },
-      { label: "Terms of service", href: "/terms" },
+      { label: "Privacy policy", href: "#" },
+      { label: "Terms of service", href: "#" },
     ],
   },
   {
     heading: "Support",
-    links: [{ label: "Help center", href: "/support" }],
+    links: [{ label: "Help center", href: "#" }],
   },
 ];
 
@@ -351,7 +351,7 @@ function AccordionItem({
           <span>{question}</span>
           <ChevronDown
             aria-hidden="true"
-            className={`h-5 w-5 flex-shrink-0 text-emerald-600 transition-transform duration-200 ${
+            className={`h-5 w-5 shrink-0 text-emerald-600 transition-transform duration-200 ${
               isOpen ? "rotate-180" : ""
             }`}
           />
@@ -458,7 +458,7 @@ function Landing() {
         {/* Hero */}
         <section aria-labelledby="hero-heading" className="relative overflow-hidden border-b border-emerald-900/10">
           <svg
-            className="pointer-events-none absolute -right-24 top-10 hidden h-[420px] w-[420px] opacity-[0.07] lg:block"
+            className="pointer-events-none absolute -right-24 top-10 hidden h-105 w-105 opacity-[0.07] lg:block"
             viewBox="0 0 200 200"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -492,14 +492,14 @@ function Landing() {
             <div className="animate-fade-in flex justify-center">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-100/60 px-5 py-2.5 text-base text-emerald-700 animate-pulse-glow">
                 <span className="h-2 w-2 rounded-full bg-emerald-600" aria-hidden="true" />
-                Powered by Gemini 3 Flash
+                Powered by Gemini 3.5 Flash
               </div>
             </div>
 
             <div className="animate-slide-up text-center">
               <h1
                 id="hero-heading"
-                className="font-['Sora'] text-4xl font-extrabold tracking-tight text-slate-900 sm:text-6xl md:text-7xl lg:text-8xl"
+                className="font-['Sora'] text-3xl font-extrabold tracking-tight text-slate-900 sm:text-6xl md:text-7xl lg:text-4xl"
               >
                 Is that link safe?
                 <br />
@@ -546,15 +546,15 @@ function Landing() {
 
               <ol className="grid grid-cols-1 divide-y divide-emerald-900/10 border-t border-emerald-900/10 sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
                 <li className="flex items-center gap-3 px-6 py-4">
-                  <Cpu className="h-5 w-5 flex-shrink-0 text-emerald-600" aria-hidden="true" />
+                  <Cpu className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
                   <span className="text-sm text-slate-600">Gemini analyzes the text and link</span>
                 </li>
                 <li className="flex items-center gap-3 px-6 py-4">
-                  <Gauge className="h-5 w-5 flex-shrink-0 text-emerald-600" aria-hidden="true" />
+                  <Gauge className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
                   <span className="text-sm text-slate-600">A 0–100 trust score is calculated</span>
                 </li>
                 <li className="flex items-center gap-3 px-6 py-4">
-                  <ShieldCheck className="h-5 w-5 flex-shrink-0 text-emerald-600" aria-hidden="true" />
+                  <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
                   <span className="text-sm text-slate-600">You get a verdict and the reasoning</span>
                 </li>
               </ol>

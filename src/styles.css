@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Syne:wght@700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Syne:wght@700;800&family=JetBrains+Mono:wght@500;700&display=swap");
 
 /* ======================== CSS Animations ======================== */
 @keyframes fadeIn {
@@ -36,10 +36,10 @@
 @keyframes glow {
   0%,
   100% {
-    box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 0 20px rgba(30, 122, 69, 0.3);
   }
   50% {
-    box-shadow: 0 0 30px rgba(79, 70, 229, 0.5);
+    box-shadow: 0 0 30px rgba(30, 122, 69, 0.5);
   }
 }
 
@@ -103,15 +103,15 @@
 
 /* Glass morphism effect */
 .glass {
-  background: rgba(79, 70, 229, 0.08);
+  background: rgba(30, 122, 69, 0.08);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(79, 70, 229, 0.2);
+  border: 1px solid rgba(30, 122, 69, 0.2);
 }
 
 .glass-dark {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border: 1px solid #e4e9f2;
+  border: 1px solid #dce6df;
 }
 
 /* Smooth transitions */
@@ -121,51 +121,85 @@
 
 /* Gradient background */
 .gradient-bg {
-  background: #f4f6fb;
+  background: #f6faf7;
 }
 
 /* ======================== CSS Variables ======================== */
 :root {
   --radius: 0.625rem;
-  --background: #f4f6fb;
-  --foreground: #0f172a;
+
+  --background: #f6faf7;
+  --foreground: #0e1f17;
+
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #0e1f17;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #4f46e5;
-  --primary-dark: #4338ca;
+  --popover-foreground: #0e1f17;
+
+  --primary: #1e7a45;
+  --primary-dark: #176338;
   --primary-foreground: #ffffff;
+
   --secondary: #ffffff;
-  --secondary-foreground: #0f172a;
-  --muted: #9aa3b8;
-  --muted-foreground: #6b7280;
-  --accent: #4f46e5;
-  --accent-dark: #4338ca;
+  --secondary-foreground: #0e1f17;
+
+  --muted: #9aaa9f;
+  --muted-foreground: #6b7a72;
+
+  --accent: #1e7a45;
+  --accent-dark: #176338;
   --accent-foreground: #ffffff;
-  --accent-light: #eef2ff;
-  --accent-light-border: #c7d2fe;
-  --destructive: #ef4444;
+  --accent-light: #e8f3ec;
+  --accent-light-border: #bfe0cd;
+
+  --destructive: #b3261e;
   --destructive-foreground: #ffffff;
-  --success: #22c55e;
+
+  --success: #1e7a45;
   --success-foreground: #ffffff;
-  --warning: #f59e0b;
+
+  --warning: #b8860b;
   --warning-foreground: #ffffff;
-  --danger: #ef4444;
+
+  --danger: #b3261e;
   --danger-foreground: #ffffff;
-  --border: #e4e9f2;
-  --input: #f8f9fc;
-  --input-border: #e4e9f2;
-  --input-focus: #4f46e5;
-  --ring: #4f46e5;
+
+  --border: #dce6df;
+  --input: #f6faf7;
+  --input-border: #dce6df;
+  --input-focus: #1e7a45;
+  --ring: #1e7a45;
+
   --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #4f46e5;
+  --sidebar-foreground: #0e1f17;
+  --sidebar-primary: #1e7a45;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eef2ff;
-  --sidebar-accent-foreground: #4f46e5;
-  --sidebar-border: #e4e9f2;
-  --sidebar-ring: #4f46e5;
+  --sidebar-accent: #e8f3ec;
+  --sidebar-accent-foreground: #1e7a45;
+  --sidebar-border: #dce6df;
+  --sidebar-ring: #1e7a45;
+
+  /* Risk signal colors — used for trust scores / risk badges */
+  --risk-low: #1e7a45;
+  --risk-low-bg: #e8f3ec;
+  --risk-low-border: #bfe0cd;
+  --risk-medium: #b8860b;
+  --risk-medium-bg: #fbf1dc;
+  --risk-medium-border: #f0dca8;
+  --risk-high: #b3261e;
+  --risk-high-bg: #fbe9e7;
+  --risk-high-border: #f0c4bf;
+
+  /* Status colors — submission lifecycle */
+  --status-pending: #1e7a45;
+  --status-pending-bg: #e8f3ec;
+  --status-pending-border: #bfe0cd;
+  --status-completed: #1e7a45;
+  --status-completed-bg: #e8f3ec;
+  --status-completed-border: #bfe0cd;
+  --status-failed: #b3261e;
+  --status-failed-bg: #fbe9e7;
+  --status-failed-border: #f0c4bf;
 }
 
 * {
@@ -189,13 +223,13 @@ h6 {
   font-family: "Syne", sans-serif;
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: #0f172a;
+  color: var(--foreground);
 }
 
 .brand-name {
   font-family: "Syne", sans-serif;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--foreground);
 }
 
 .body-text {
@@ -209,11 +243,19 @@ h6 {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-size: 11px;
-  color: #6b7280;
+  color: var(--muted-foreground);
 }
 
 .badge {
-  background-color: #eef2ff;
-  color: #4f46e5;
+  background-color: var(--accent-light);
+  color: var(--accent);
   letter-spacing: 0.04em;
+}
+
+/* Data face — used for trust scores and any numeric readout.
+   Keeps numbers feeling measured rather than decorative. */
+.data-mono {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
