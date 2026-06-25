@@ -17,6 +17,9 @@ const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Submit", url: "/submit", icon: PlusCircle },
   { title: "History", url: "/history", icon: History },
+  { title: "Setting", url: "#", icon: PlusCircle },
+  { title: "Profile", url: "#", icon: PlusCircle },
+  { title: "History", url: "#", icon: PlusCircle },
 ];
 
 export function AppSidebar() {
@@ -24,15 +27,15 @@ export function AppSidebar() {
   const { user, signOut } = useAuth();
 
   return (
-    <Sidebar collapsible="icon" style={{backgroundColor: '#FFFFFF', borderRight: '1px solid #E4E9F2'}}>
+    <Sidebar collapsible="icon" style={{backgroundColor: "var(--sidebar-primary-foreground)", borderRight: '1px solid #E4E9F2'}}>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{backgroundColor: '#4F46E5'}}>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{backgroundColor: '#4F46E5' }}>
             <Shield className="h-4 w-4 text-white" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold tracking-tight brand-name" style={{color: '#0F172A'}}>TrustLayer</span>
-            <span className="text-xs" style={{color: '#9AA3B8'}}>Risk analysis</span>
+            <span className="text-sm font-semibold tracking-tight brand-name" style={{color: "var(--accent-dark)"}}>TrustLayer</span>
+            <span className="text-xs" style={{color: '(var(--accent)'}}>Risk analysis</span>
           </div>
         </div>
       </SidebarHeader>
@@ -48,8 +51,8 @@ export function AppSidebar() {
                     tooltip={item.title}
                     style={{
                       backgroundColor: path === item.url ? '#EEF2FF' : 'transparent',
-                      color: path === item.url ? '#4F46E5' : '#6B7280',
-                      borderLeft: path === item.url ? '3px solid #4F46E5' : 'none',
+                      color: path === item.url ? 'var(--accent)' : '#6B7280',
+                      borderLeft: path === item.url ? '3px solid var(--accent)' : 'none',
                       cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => {
@@ -77,19 +80,19 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="px-2 pb-2" style={{borderTop: '1px solid #E4E9F2', paddingTop: '8px'}}>
+        <div className="px-6 pb-6" style={{borderTop: '1px solid #E4E9F2', paddingTop: '8px'}}>
           <div className="truncate text-xs" style={{color: '#9AA3B8'}}>{user?.email}</div>
           <button
             onClick={() => signOut()}
             className="mt-3 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-smooth animate-slide-down"
             style={{
-              backgroundColor: '#9AA3B8',
-              color: 'black',
+              backgroundColor: 'var(--danger)',
+              color: 'white',
               cursor: 'pointer'
             }}
           
           >
-            <LogOut className="h-4 w-4 " /> Sign out
+            <LogOut className="h-4 w-4 " style={{color: "(var(--accent-dark))"}} /> Sign out
           </button>
         </div>
       </SidebarFooter>
