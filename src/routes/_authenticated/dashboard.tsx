@@ -100,36 +100,11 @@ function Dashboard() {
           .eq("user_id", user!.id)
           .eq("status", "pending"),
 
-        // Risk breakdown via RPC — avoids fetching every row just to count.
-        // Create this in Supabase with:
-        //
-        //   create or replace function get_risk_counts(uid uuid)
-        //   returns table(risk_level text, cnt bigint) language sql as $$
-        //     select r.risk_level, count(*) as cnt
-        //     from results r
-        //     join submissions s on s.id = r.submission_id
-        //     where s.user_id = uid
-        //     group by r.risk_level;
-        //   $$;
-        supabase.rpc("get_risk_counts", { uid: user!.id }),
-
-        // 30-day daily avg trust score for the trend chart, via RPC.
-        // Create this in Supabase with:
-        //
-        //   create or replace function get_trust_trend(uid uuid)
-        //   returns table(day date, avg_score numeric) language sql as $$
-        //     select date_trunc('day', s.created_at)::date as day,
-        //            round(avg(r.trust_score)) as avg_score
-        //     from results r
-        //     join submissions s on s.id = r.submission_id
-        //     where s.user_id = uid
-        //       and s.created_at >= now() - interval '30 days'
-        //     group by 1
-        //     order by 1;
-        //   $$;
-        supabase.rpc("get_trust_trend", { uid: user!.id }),
+       
+        supabase.rpc("get_risk_counts" as never, { uid: user!.id } as never),
+  
+        supabase.rpc("get_trust_trend" as never, { uid: user!.id } as never),
       ]);
-
       const recentSubs = recentSubsRes.data ?? [];
       const submissionIds = recentSubs.map((s) => s.id);
 
@@ -251,7 +226,7 @@ function Dashboard() {
                 color: "var(--risk-high)",
               }}
             >
-              <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+              <AlertTriangle className="h-4 w-4 shrink-0" />
               Your average trust score has dropped below 50 — review high-risk
               submissions.
               <Link
@@ -268,6 +243,7 @@ function Dashboard() {
         <motion.div
           className="grid grid-cols-2 gap-4 lg:grid-cols-4"
           variants={{
+             hidden: {}, 
             show: { transition: { staggerChildren: 0.07 } },
           }}
           initial="hidden"
@@ -327,10 +303,10 @@ function Dashboard() {
             </div>
 
             {isLoading ? (
-              <Skeleton className="h-[200px] w-full rounded-lg" />
+              <Skeleton className="h-50 w-full rounded-lg" />
             ) : (data?.trendData.length ?? 0) === 0 ? (
               <div
-                className="flex h-[200px] items-center justify-center text-sm"
+                className="flex h-50 items-center justify-center text-sm"
                 style={{ color: "var(--muted-foreground)" }}
               >
                 No trend data yet.
@@ -411,7 +387,7 @@ function Dashboard() {
 
             {isLoading ? (
               <div className="flex flex-col items-center gap-3">
-                <Skeleton className="h-[160px] w-[160px] rounded-full" />
+                <Skeleton className="h-40 w-40 rounded-full" />
                 <Skeleton className="h-4 w-24" />
               </div>
             ) : (
@@ -529,7 +505,7 @@ function Dashboard() {
                         <Link
                           to="/results/$id"
                           params={{ id: s.id }}
-                          className="flex items-center justify-between gap-4 px-5 py-4 transition-smooth hover:bg-[var(--accent-light)]"
+                          className="flex items-center justify-between gap-4 px-5 py-4 transition-smooth hover:bg-(--accent-light)"
                         >
                           <div className="min-w-0 flex-1">
                             <div
@@ -691,7 +667,7 @@ function RiskBar({
   return (
     <div className="flex items-center gap-2 text-xs">
       <span
-        className="h-2 w-2 flex-shrink-0 rounded-full"
+        className="h-2 w-2 shrink-0 rounded-full"
         style={{ backgroundColor: color }}
       />
       <span
@@ -725,7 +701,7 @@ function RiskBar({
 // ─── StatCard ────────────────────────────────────────────────────────────────
 const cardVariants = {
   hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const} },
 };
 
 function StatCard({
@@ -746,17 +722,17 @@ function StatCard({
   accent?: string;
 }) {
   return (
-    <motion.div
-      variants={cardVariants}
-      className="rounded-xl p-5"
-      style={{
-        backgroundColor: "var(--card)",
-        border: "1px solid var(--border)",
-        borderRadius: "14px",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
+    // ✅ Correct — variants and style are separate
+<motion.div
+  variants={cardVariants}
+  className="rounded-xl p-5"
+  style={{
+    backgroundColor: "var(--card)",
+    border: "1px solid var(--border)",
+    position: "relative",
+    overflow: "hidden",
+  }}
+>
       {/* Top accent stripe */}
       <div
         style={{

@@ -48,8 +48,6 @@ async function callAI(inputText: string): Promise<AIResult> {
   const textContent = data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!textContent) throw new Error("Malformed Gemini response");
 
-  // Strip markdown code fences (```json ... ``` or ``` ... ```) that Gemini
-  // sometimes wraps its JSON output in, even when told not to.
   const cleaned = textContent.replace(/```json\s*|```/g, "").trim();
 
   let parsed: Record<string, unknown>;
@@ -60,19 +58,16 @@ async function callAI(inputText: string): Promise<AIResult> {
     throw new Error("Could not parse Gemini response as JSON");
   }
 
-  // Validate trust_score
   const trustScore = Number(parsed.trust_score);
   if (Number.isNaN(trustScore)) {
     throw new Error(`Invalid trust_score from Gemini: ${parsed.trust_score}`);
   }
 
-  // Validate risk_level
   const riskLevelRaw = String(parsed.risk_level ?? "").toLowerCase().trim();
   if (!VALID_RISK_LEVELS.includes(riskLevelRaw as (typeof VALID_RISK_LEVELS)[number])) {
     throw new Error(`Invalid risk_level from Gemini: ${parsed.risk_level}`);
   }
 
-  // Validate explanation
   if (!parsed.explanation || typeof parsed.explanation !== "string") {
     throw new Error("Missing or invalid explanation from Gemini");
   }
@@ -84,16 +79,18 @@ async function callAI(inputText: string): Promise<AIResult> {
   };
 }
 
-export async function analyzeSubmission(inputData: unknown): Promise<{ submissionId: string }> {
-  // Validate input
+export async function analyzeSubmission(inputData: unknown): Promise<{
+  submissionId: string;
+  trustScore: number;
+  riskLevel: "low" | "medium" | "high";
+  explanation: string;
+}> {
   const data = InputSchema.parse(inputData);
 
-  // Get current user
   const { data: session } = await supabase.auth.getSession();
   if (!session?.session) throw new Error("Unauthorized");
   const userId = session.session.user.id;
 
-  // Create pending submission
   const { data: sub, error: insErr } = await supabase
     .from("submissions")
     .insert({ user_id: userId, input_text: data.inputText, status: "pending" })
@@ -110,9 +107,18 @@ export async function analyzeSubmission(inputData: unknown): Promise<{ submissio
       explanation: ai.explanation,
     });
     if (rErr) throw rErr;
-    const { error: updateErr } = await supabase.from("submissions").update({ status: "completed" }).eq("id", sub.id);
+    const { error: updateErr } = await supabase
+      .from("submissions")
+      .update({ status: "completed" })
+      .eq("id", sub.id);
     if (updateErr) throw updateErr;
-    return { submissionId: sub.id };
+
+    return {
+      submissionId: sub.id,
+      trustScore: ai.trust_score,
+      riskLevel: ai.risk_level,
+      explanation: ai.explanation,
+    };
   } catch (e) {
     await supabase.from("submissions").update({ status: "failed" }).eq("id", sub.id);
     throw e instanceof Error ? e : new Error("Analysis failed");

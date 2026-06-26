@@ -17,9 +17,6 @@ const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Submit", url: "/submit", icon: PlusCircle },
   { title: "History", url: "/history", icon: History },
-  { title: "Setting", url: "#", icon: PlusCircle },
-  { title: "Profile", url: "#", icon: PlusCircle },
-  { title: "History", url: "#", icon: PlusCircle },
 ];
 
 export function AppSidebar() {
@@ -35,7 +32,7 @@ export function AppSidebar() {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold tracking-tight brand-name" style={{color: "var(--accent-dark)"}}>TrustLayer</span>
-            <span className="text-xs" style={{color: '(var(--accent)'}}>Risk analysis</span>
+            <span className="text-xs" style={{color: 'var(--accent'}}>Risk analysis</span>
           </div>
         </div>
       </SidebarHeader>
@@ -92,7 +89,7 @@ export function AppSidebar() {
             }}
           
           >
-            <LogOut className="h-4 w-4 " style={{color: "(var(--accent-dark))"}} /> Sign out
+            <LogOut className="h-4 w-4 " style={{color: "var(--accent-dark)"}} /> Sign out
           </button>
         </div>
       </SidebarFooter>
