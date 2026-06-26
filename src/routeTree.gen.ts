@@ -17,10 +17,17 @@ import { Route as ResultsIdRouteImport } from './routes/results.$id'
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as ConfirmRouteImport } from './routes/confirm'
+
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfirmRoute = ConfirmRouteImport.update({
+  id: '/confirm',
+  path: '/confirm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -61,6 +68,7 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/confirm': typeof ConfirmRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/history': typeof AuthenticatedHistoryRoute
@@ -70,6 +78,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/confirm': typeof ConfirmRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/history': typeof AuthenticatedHistoryRoute
@@ -81,6 +90,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
+  
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
@@ -92,6 +102,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/confirm'
     | '/reset-password'
     | '/dashboard'
     | '/history'
@@ -101,6 +112,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/confirm'
     | '/reset-password'
     | '/dashboard'
     | '/history'
@@ -110,7 +122,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/login'
+  | '/login'
+    | '/confirm'
     | '/reset-password'
     | '/_authenticated/dashboard'
     | '/_authenticated/history'
@@ -123,6 +136,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ConfirmRoute: typeof ConfirmRoute
   ResultsIdRoute: typeof ResultsIdRoute
 }
 
@@ -140,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confirm': {
+      id: '/confirm'
+      path: '/confirm'
+      fullPath: '/confirm'
+      preLoaderRoute: typeof ConfirmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -208,6 +229,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ConfirmRoute: ConfirmRoute,
   ResultsIdRoute: ResultsIdRoute,
 }
 

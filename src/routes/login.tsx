@@ -79,7 +79,7 @@ function LoginPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/dashboard" },
+          options: { emailRedirectTo: window.location.origin + "/confirm" },
         });
         if (error) throw error;
         // Land the person back on sign-in with a clear next step, instead of
