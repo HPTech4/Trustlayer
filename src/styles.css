@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Syne:wght@700;800&family=JetBrains+Mono:wght@500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap");
 
 /* ======================== CSS Animations ======================== */
 @keyframes fadeIn {
@@ -202,6 +202,67 @@
   --status-failed-border: #f0c4bf;
 }
 
+:root.dark {
+  --background: #07110d;
+  --foreground: #f5f8f6;
+
+  --card: #0d1714;
+  --card-foreground: #f5f8f6;
+  --popover: #0d1714;
+  --popover-foreground: #f5f8f6;
+
+  --primary: #4fdc8f;
+  --primary-dark: #36b56f;
+  --primary-foreground: #07110d;
+
+  --secondary: #14231d;
+  --secondary-foreground: #f5f8f6;
+
+  --muted: #6f7f76;
+  --muted-foreground: #b8c3bb;
+
+  --accent: #4fdc8f;
+  --accent-dark: #36b56f;
+  --accent-foreground: #07110d;
+  --accent-light: #123224;
+  --accent-light-border: #27553a;
+
+  --border: #22342c;
+  --input: #0f1714;
+  --input-border: #22342c;
+  --input-focus: #4fdc8f;
+  --ring: #4fdc8f;
+
+  --sidebar: #0d1714;
+  --sidebar-foreground: #f5f8f6;
+  --sidebar-primary: #4fdc8f;
+  --sidebar-primary-foreground: #07110d;
+  --sidebar-accent: #123224;
+  --sidebar-accent-foreground: #4fdc8f;
+  --sidebar-border: #22342c;
+  --sidebar-ring: #4fdc8f;
+
+  --risk-low: #4fdc8f;
+  --risk-low-bg: #123224;
+  --risk-low-border: #27553a;
+  --risk-medium: #f5c56a;
+  --risk-medium-bg: #3e2f16;
+  --risk-medium-border: #6d4d1c;
+  --risk-high: #ff7b72;
+  --risk-high-bg: #3b1f1b;
+  --risk-high-border: #6f332d;
+
+  --status-pending: #4fdc8f;
+  --status-pending-bg: #123224;
+  --status-pending-border: #27553a;
+  --status-completed: #4fdc8f;
+  --status-completed-bg: #123224;
+  --status-completed-border: #27553a;
+  --status-failed: #ff7b72;
+  --status-failed-bg: #3b1f1b;
+  --status-failed-border: #6f332d;
+}
+
 * {
   border-color: var(--border);
 }
@@ -209,8 +270,11 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Inter", "Segoe UI", sans-serif;
   font-weight: 400;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Typography */
@@ -220,26 +284,26 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Syne", sans-serif;
-  font-weight: 800;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--foreground);
 }
 
 .brand-name {
-  font-family: "Syne", sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
   color: var(--foreground);
 }
 
 .body-text {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Inter", "Segoe UI", sans-serif;
   font-weight: 400;
 }
 
 .form-label {
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 500;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-size: 11px;

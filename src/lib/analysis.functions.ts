@@ -1,16 +1,20 @@
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
+// Validate the user input before touching the database or AI service.
 const InputSchema = z.object({ inputText: z.string().min(10).max(5000) });
 
+// Shape returned by the Gemini model after parsing its JSON response.
 interface AIResult {
   trust_score: number;
   risk_level: "low" | "medium" | "high";
   explanation: string;
 }
 
+// Restrict accepted risk levels to the values the UI expects.
 const VALID_RISK_LEVELS = ["low", "medium", "high"] as const;
 
+// Send the user text to Gemini and normalize the response into our app format.
 async function callAI(inputText: string): Promise<AIResult> {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) throw new Error("Gemini API key not configured");
@@ -79,6 +83,8 @@ async function callAI(inputText: string): Promise<AIResult> {
   };
 }
 
+// Entry point for the submission flow: create a pending record, analyze it,
+// persist the result, and then mark the submission as complete or failed.
 export async function analyzeSubmission(inputData: unknown): Promise<{
   submissionId: string;
   trustScore: number;

@@ -63,7 +63,7 @@ function Dashboard() {
     queryKey: ["dashboard", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      // ── All queries fire in parallel ──────────────────────────────────────
+      // Load the dashboard data in parallel so the page feels fast and the UI is not blocked by sequential requests.
       const [
         recentSubsRes,
         totalCountRes,
@@ -108,7 +108,7 @@ function Dashboard() {
       const recentSubs = recentSubsRes.data ?? [];
       const submissionIds = recentSubs.map((s) => s.id);
 
-      // Fetch results only for the visible recent rows
+      // Only fetch result rows for the recent submissions that are actually visible in the activity list.
       const recentResultsRes =
         submissionIds.length > 0
           ? await supabase
@@ -117,7 +117,7 @@ function Dashboard() {
               .in("submission_id", submissionIds)
           : { data: [] };
 
-      // Build risk counts from RPC result
+      // Translate the RPC result into the shape expected by the dashboard cards and charts.
       const riskCounts = { low: 0, medium: 0, high: 0 };
       (riskCountsRes.data ?? []).forEach(
         (row: { risk_level: string; cnt: number }) => {
@@ -165,10 +165,11 @@ function Dashboard() {
     },
   });
 
-  // Derived values — all from accurate server-side counts
+  // These derived values come from the aggregated query results, so the UI stays consistent with the database.
   const total = data?.totalCount ?? 0;
   const completed = data?.completedCount ?? 0;
   const pending = data?.pendingCount ?? 0;
+  const hasSubmissions = (data?.recentSubs.length ?? 0) > 0;
   const avgScore = data?.globalAvgScore ?? null;
   const riskCounts = data?.riskCounts ?? { low: 0, medium: 0, high: 0 };
   const riskTotal = riskCounts.low + riskCounts.medium + riskCounts.high;
@@ -179,7 +180,7 @@ function Dashboard() {
     (data?.recentResults ?? []).map((r) => [r.submission_id, r])
   );
 
-  // Low trust score alert
+  // Show the warning banner when the user's average score drops below the threshold.
   const showAlert = avgScore !== null && avgScore < 50;
 
   return (
@@ -187,11 +188,11 @@ function Dashboard() {
       style={{ backgroundColor: "var(--background)" }}
       className="min-h-screen px-6 py-8"
     >
-      <div className="mx-auto max-w-5xl space-y-6">
+      <div className="mx-auto w-full max-w-5xl space-y-6">
 
         {/* ── Header ────────────────────────────────────────────────────── */}
         <motion.div
-          className="flex items-center justify-between"
+          className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
@@ -239,9 +240,36 @@ function Dashboard() {
           )}
         </AnimatePresence>
 
+        {!isLoading && !hasSubmissions && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl p-6"
+            style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold" style={{ color: "var(--foreground)" }}>
+                  No analyses yet
+                </h2>
+                <p className="mt-1 text-sm" style={{ color: "var(--muted-foreground)" }}>
+                  Start with one case to see your score trend, risk breakdown, and recent activity.
+                </p>
+              </div>
+              <Link
+                to="/submit"
+                className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold text-white transition-smooth"
+                style={{ backgroundColor: "var(--primary)" }}
+              >
+                Run your first analysis
+              </Link>
+            </div>
+          </motion.div>
+        )}
+
         {/* ── KPI cards ─────────────────────────────────────────────────── */}
         <motion.div
-          className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
           variants={{
              hidden: {}, 
             show: { transition: { staggerChildren: 0.07 } },
@@ -282,7 +310,7 @@ function Dashboard() {
         </motion.div>
 
         {/* ── Charts row ────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_300px]">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_300px]">
 
           {/* Trend area chart */}
           <motion.div

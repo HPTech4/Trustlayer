@@ -39,7 +39,7 @@ export const Route = createFileRoute("/")({
 /* ----------------------------------------------------------------------- */
 
 const TECH_TRUST_ITEMS = [
-  { icon: Cpu, label: "Powered by Gemini 3.5 Flash" },
+  { icon: Cpu, label: "Powered by Gemini 2.5 Flash" },
   { icon: Lock, label: "Built on Supabase Row-Level Security" },
   { icon: Zap, label: "Real-time analysis" },
   { icon: ShieldCheck, label: "Encrypted at rest" },
@@ -72,7 +72,7 @@ const HOW_IT_WORKS_STEPS = [
   {
     icon: Cpu,
     title: "AI scan for pattern",
-    desc: "Gemini 3 Flash checks it against known phishing and fraud patterns in real time.",
+    desc: "Gemini 2.5 Flash checks it against known phishing and fraud patterns in real time.",
   },
   {
     icon: Gauge,
@@ -204,7 +204,7 @@ const FAQ_ITEMS = [
   {
     question: "How does the trust score work?",
     answer:
-      "Gemini 3 Flash evaluates the submission against known phishing and fraud signals and returns a 0–100 score along with a risk level. Higher scores mean fewer risk signals were found.",
+      "Gemini 2.5 Flash evaluates the submission against known phishing and fraud signals and returns a 0–100 score along with a risk level. Higher scores mean fewer risk signals were found.",
   },
   {
     question: "Is my information private?",
@@ -492,7 +492,7 @@ function Landing() {
             <div className="animate-fade-in flex justify-center">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-100/60 px-5 py-2.5 text-base text-emerald-700 animate-pulse-glow">
                 <span className="h-2 w-2 rounded-full bg-emerald-600" aria-hidden="true" />
-                Powered by Gemini 3.5 Flash
+                Powered by Gemini 2.5 Flash
               </div>
             </div>
 
@@ -547,7 +547,7 @@ function Landing() {
               <ol className="grid grid-cols-1 divide-y divide-emerald-900/10 border-t border-emerald-900/10 sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
                 <li className="flex items-center gap-3 px-6 py-4">
                   <Cpu className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
-                  <span className="text-sm text-slate-600">Gemini analyzes the text and link</span>
+                  <span className="text-sm text-slate-600">Gemini 2.5 Flash analyzes the text and link</span>
                 </li>
                 <li className="flex items-center gap-3 px-6 py-4">
                   <Gauge className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />

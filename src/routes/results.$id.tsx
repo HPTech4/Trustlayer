@@ -19,6 +19,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  confidenceForScore,
+  deriveFactors,
+  parseExplanation,
+  riskHex,
+  scoreLabel,
+  type FactorScore,
+  type FlagSeverity,
+  type ParsedExplanation,
+  type RiskLevel,
+  type SignalFlag,
+  verdictText,
+} from "@/lib/result-analysis";
 
 // ─── Route ────────────────────────────────────────────────────────────────────
 export const Route = createFileRoute("/results/$id")({
@@ -31,134 +44,12 @@ export const Route = createFileRoute("/results/$id")({
 });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type RiskLevel = "low" | "medium" | "high";
-type FlagSeverity = "warning" | "danger" | "pass" | "info";
-
-interface SignalFlag {
-  label: string;
-  severity: FlagSeverity;
-}
-
-interface ParsedExplanation {
-  summary: string;
-  detail: string;
-  flags: SignalFlag[];
-}
-
-interface FactorScore {
-  label: string;
-  score: number;
-  weight: number;
-}
+// Shared analysis helpers live in src/lib/result-analysis.ts
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
-const RISK_HEX: Record<RiskLevel, string> = {
-  low:    "#1baf7a",
-  medium: "#eda100",
-  high:   "#e34948",
-};
-
-function riskColor(level: RiskLevel)  { return `var(--risk-${level})`; }
-function riskHex(level: RiskLevel)    { return RISK_HEX[level]; }
-function riskBg(level: RiskLevel)     { return `var(--risk-${level}-bg)`; }
+function riskColor(level: RiskLevel) { return `var(--risk-${level})`; }
+function riskBg(level: RiskLevel) { return `var(--risk-${level}-bg)`; }
 function riskBorder(level: RiskLevel) { return `var(--risk-${level}-border)`; }
-
-function scoreLabel(score: number): string {
-  if (score >= 80) return "High trust";
-  if (score >= 60) return "Moderate trust";
-  if (score >= 40) return "Low trust";
-  return "Very low trust";
-}
-
-function verdictText(level: RiskLevel): { headline: string; sub: string } {
-  const map: Record<RiskLevel, { headline: string; sub: string }> = {
-    low:    { headline: "Looks trustworthy",             sub: "No major concerns detected" },
-    medium: { headline: "Some things need a closer look", sub: "A few signals worth checking" },
-    high:   { headline: "Serious red flags found",       sub: "Review carefully before proceeding" },
-  };
-  return map[level];
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-function deriveFactors(text: string, overallScore: number): FactorScore[] {
-  const lower = text.toLowerCase();
-  return [
-    {
-      label: "Entity age",
-      score: lower.includes("new") || lower.includes("recent") || lower.includes("month-old")
-        ? Math.max(10, overallScore - 25) : Math.min(90, overallScore + 15),
-      weight: 20,
-    },
-    {
-      label: "Jurisdiction risk",
-      score: lower.includes("jurisdiction") || lower.includes("offshore") || lower.includes("low-tax")
-        ? Math.max(5, overallScore - 35) : Math.min(95, overallScore + 10),
-      weight: 25,
-    },
-    {
-      label: "Transfer size",
-      score: lower.includes("wire transfer") || lower.includes("large transfer") || lower.includes("$")
-        ? Math.max(15, overallScore - 20) : Math.min(85, overallScore + 5),
-      weight: 20,
-    },
-    {
-      label: "Relationship history",
-      score: lower.includes("no prior history") || lower.includes("no history") || lower.includes("new client")
-        ? Math.max(10, overallScore - 30) : Math.min(90, overallScore + 20),
-      weight: 20,
-    },
-    {
-      label: "Verification status",
-      score: lower.includes("unverified") || lower.includes("no registration")
-        ? Math.max(5, overallScore - 40)
-        : lower.includes("verified") || lower.includes("established")
-        ? Math.min(95, overallScore + 25)
-        : overallScore,
-      weight: 15,
-    },
-  ];
-}
-
-function parseExplanation(raw: string): ParsedExplanation {
-  try {
-    const parsed = JSON.parse(raw);
-    if (parsed.summary && parsed.detail)
-      return { summary: parsed.summary, detail: parsed.detail, flags: parsed.flags ?? [] };
-  } catch { /* fall through */ }
-
-  const sentences = raw.split(/(?<=[.!?])\s+/).filter(Boolean);
-  const lower = raw.toLowerCase();
-  const flags: SignalFlag[] = [];
-
-  const rules: [string, string, FlagSeverity][] = [
-    ["shell company",   "Shell / offshore entity",  "danger"],
-    ["offshore",        "Shell / offshore entity",  "danger"],
-    ["wire transfer",   "High-value transfer",      "warning"],
-    ["large transfer",  "High-value transfer",      "warning"],
-    ["no prior history","No transaction history",   "warning"],
-    ["no history",      "No transaction history",   "warning"],
-    ["unverified",      "Unverified registration",  "danger"],
-    ["no registration", "Unverified registration",  "danger"],
-    ["verified",        "Verified entity",          "pass"],
-    ["established",     "Established entity",       "pass"],
-    ["jurisdiction",    "High-risk jurisdiction",   "danger"],
-    ["low-tax",         "High-risk jurisdiction",   "danger"],
-    ["new client",      "New counterparty",         "info"],
-    ["new customer",    "New counterparty",         "info"],
-  ];
-
-  const seen = new Set<string>();
-  rules.forEach(([kw, label, sev]) => {
-    if (lower.includes(kw) && !seen.has(label)) {
-      seen.add(label);
-      flags.push({ label, severity: sev });
-    }
-  });
-
-  if (!flags.length) flags.push({ label: "Manual review recommended", severity: "info" });
-
-  return { summary: sentences[0] ?? raw, detail: sentences.slice(1).join(" "), flags };
-}
 
 const flagConfig: Record<
   FlagSeverity,
@@ -208,10 +99,16 @@ function ResultsPage() {
   const riskLevel = r?.risk_level as RiskLevel | undefined;
   const parsed    = r ? parseExplanation(r.explanation ?? "") : null;
   const factors   = r ? deriveFactors(r.explanation ?? "", r.trust_score) : [];
+  const confidence = r ? confidenceForScore(r.trust_score) : null;
   const peerAvg   = riskLevel === "low" ? 74 : riskLevel === "medium" ? 45 : 22;
+  const evidencePoints = [
+    parsed?.summary,
+    ...(parsed?.flags.slice(0, 3).map((flag) => flag.label) ?? []),
+    ...(factors.slice(0, 3).map((factor) => `${factor.label}: ${Math.round(factor.score)} / 100`)),
+  ].filter(Boolean) as string[];
 
   return (
-    <div className="min-h-screen px-4 py-8 sm:px-6" style={{ backgroundColor: "var(--background)" }}>
+    <div className="min-h-screen px-3 py-5 sm:px-6 sm:py-8" style={{ backgroundColor: "var(--background)" }}>
       <div className="mx-auto max-w-2xl">
 
         {/* Back */}
@@ -231,7 +128,7 @@ function ResultsPage() {
           {isLoading && (
             <motion.div key="skeleton" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-8 space-y-3">
               {[200, 120, 80].map((h, i) => (
-                <div key={i} className="rounded-2xl p-6" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+                <div key={i} className="rounded-2xl p-4 sm:p-6" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
                   <Skeleton className="h-3 w-20 mb-4" />
                   <Skeleton style={{ height: h }} className="rounded-xl w-full" />
                 </div>
@@ -269,7 +166,7 @@ function ResultsPage() {
             {/* ══ 1. GAUGE HERO ══ */}
             <motion.div variants={fadeUp}>
               <div
-                className="relative overflow-hidden rounded-2xl p-6"
+                className="relative overflow-hidden rounded-2xl p-4 sm:p-6"
                 style={{
                   backgroundColor: "var(--card)",
                   border: riskLevel ? `1px solid ${riskBorder(riskLevel)}` : "1px solid var(--border)",
@@ -285,7 +182,7 @@ function ResultsPage() {
                   />
                 )}
 
-                <div className="relative flex flex-col items-center">
+                <div className="relative flex flex-col items-center px-1">
                   <span
                     className="text-xs font-semibold tracking-widest uppercase mb-2"
                     style={{ color: "var(--muted-foreground)" }}
@@ -297,7 +194,7 @@ function ResultsPage() {
                     <>
                       <TrustGauge score={r.trust_score} riskLevel={riskLevel} />
 
-                      <div className="flex items-center gap-3 -mt-1">
+                      <div className="mt-1 flex flex-col items-center gap-2 sm:flex-row sm:gap-3">
                         <RiskBadge level={riskLevel} />
                         <span className="text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
                           {scoreLabel(r.trust_score)}
@@ -357,11 +254,49 @@ function ResultsPage() {
               </motion.div>
             )}
 
-            {/* ══ 3. SIGNAL FLAGS ══ */}
+            {/* ══ 3. WHY THIS SCORE WAS GIVEN ══ */}
+            {r && confidence && (
+              <motion.div variants={fadeUp}>
+                <div
+                  className="rounded-2xl p-4 sm:p-6"
+                  style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="form-label">Why this score was given</span>
+                    <span
+                      className="rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                      style={{ backgroundColor: riskBg(riskLevel ?? "low"), color: riskColor(riskLevel ?? "low") }}
+                    >
+                      {confidence.label}
+                    </span>
+                  </div>
+
+                  <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
+                    {confidence.detail}
+                  </p>
+
+                  <div
+                    className="mt-4 rounded-xl p-4"
+                    style={{ backgroundColor: "var(--input)", border: "1px solid var(--input-border)" }}
+                  >
+                    <ul className="space-y-2 text-sm" style={{ color: "var(--foreground)" }}>
+                      {evidencePoints.map((point, index) => (
+                        <li key={`${point}-${index}`} className="flex gap-2">
+                          <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--primary)" }} />
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ══ 4. SIGNAL FLAGS ══ */}
             {parsed && parsed.flags.length > 0 && (
               <motion.div variants={fadeUp}>
                 <div
-                  className="rounded-2xl p-6"
+                  className="rounded-2xl p-4 sm:p-6"
                   style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
                 >
                   <span className="form-label block mb-4">Risk signals detected</span>
@@ -374,11 +309,11 @@ function ResultsPage() {
               </motion.div>
             )}
 
-            {/* ══ 4. FACTOR BREAKDOWN ══ */}
+            {/* ══ 5. FACTOR BREAKDOWN ══ */}
             {r && factors.length > 0 && (
               <motion.div variants={fadeUp}>
                 <div
-                  className="rounded-2xl p-6"
+                  className="rounded-2xl p-4 sm:p-6"
                   style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
                 >
                   <div className="flex items-center justify-between mb-5">
@@ -394,11 +329,11 @@ function ResultsPage() {
               </motion.div>
             )}
 
-            {/* ══ 5. PEER COMPARISON ══ */}
+            {/* ══ 6. PEER COMPARISON ══ */}
             {r && riskLevel && (
               <motion.div variants={fadeUp}>
                 <div
-                  className="rounded-2xl p-6"
+                  className="rounded-2xl p-4 sm:p-6"
                   style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
                 >
                   <span className="form-label block mb-4">How it compares</span>
@@ -407,7 +342,7 @@ function ResultsPage() {
               </motion.div>
             )}
 
-            {/* ══ 6. SUBMITTED TEXT ══ */}
+            {/* ══ 7. SUBMITTED TEXT ══ */}
             <motion.div variants={fadeUp}>
               <div
                 className="overflow-hidden rounded-2xl"
@@ -415,10 +350,10 @@ function ResultsPage() {
               >
                 <button
                   onClick={() => setTextOpen(o => !o)}
-                  className="flex w-full items-center justify-between px-6 py-4 text-left transition-smooth hover:bg-(--accent-light)"
+                  className="flex w-full flex-col items-start gap-3 px-4 py-4 text-left transition-smooth hover:bg-(--accent-light) sm:flex-row sm:items-center sm:justify-between sm:px-6"
                   style={{ color: "var(--foreground)" }}
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <FileText className="h-4 w-4" style={{ color: "var(--primary)" }} />
                     <span className="text-sm font-semibold">Submitted text</span>
                     <span
@@ -428,7 +363,7 @@ function ResultsPage() {
                       {data.input_text.trim().split(/\s+/).filter(Boolean).length}w
                     </span>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <span className="flex items-center gap-1 text-xs" style={{ color: "var(--muted-foreground)" }}>
                       <Calendar className="h-3.5 w-3.5" />
                       {new Date(data.created_at).toLocaleString()}
@@ -448,7 +383,7 @@ function ResultsPage() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     >
-                      <div className="px-6 pb-6" style={{ borderTop: "1px solid var(--border)" }}>
+                      <div className="px-4 pb-4 sm:px-6 sm:pb-6" style={{ borderTop: "1px solid var(--border)" }}>
                         <div
                           className="mt-4 rounded-xl p-4"
                           style={{ backgroundColor: "var(--input)", border: "1px solid var(--input-border)" }}
@@ -467,7 +402,7 @@ function ResultsPage() {
               </div>
             </motion.div>
 
-            {/* ══ 7. CTAs ══ */}
+            {/* ══ 8. CTAs ══ */}
             <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 pt-1 pb-8">
               <Link
                 to="/submit"
@@ -692,7 +627,7 @@ function FactorBar({ factor, index }: { factor: FactorScore; index: number }) {
       transition={{ duration: 0.35, delay: index * 0.07, ease: "easeOut" as const }}
       className="flex items-center gap-3"
     >
-      <span className="text-xs font-medium shrink-0" style={{ width: 148, color: "var(--foreground)" }}>
+      <span className="text-xs font-medium shrink-0" style={{ width: 112, color: "var(--foreground)" }}>
         {factor.label}
       </span>
       <div className="flex-1 overflow-hidden rounded-full" style={{ height: 7, backgroundColor: "var(--border)" }}>
@@ -744,7 +679,7 @@ function PeerComparison({
           { label: "Peer average",    value: peerAvg, color: "var(--muted-foreground)", opacity: 0.45, delay: 0.35 },
         ].map(({ label, value, color, opacity, delay }) => (
           <div key={label} className="flex items-center gap-3">
-            <span className="text-xs shrink-0" style={{ width: 112, color: "var(--muted-foreground)" }}>
+            <span className="text-xs shrink-0" style={{ width: 92, color: "var(--muted-foreground)" }}>
               {label}
             </span>
             <div className="flex-1 rounded-full overflow-hidden" style={{ height: 10, backgroundColor: "var(--border)" }}>

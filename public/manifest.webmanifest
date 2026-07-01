@@ -1,0 +1,17 @@
+{
+  "name": "TrustLayer",
+  "short_name": "TrustLayer",
+  "description": "AI-powered risk analysis for trustworthiness assessment",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6faf7",
+  "theme_color": "#1e7a45",
+  "icons": [
+    {
+      "src": "/trustlayer-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

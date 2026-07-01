@@ -45,6 +45,7 @@ function SubmitPage() {
   const navigate = useNavigate();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // The form state is driven by a small finite-state machine: idle, typing, analyzing, result.
   const [text, setText] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [tipsOpen, setTipsOpen] = useState(false);
@@ -103,6 +104,7 @@ function SubmitPage() {
     setTimeout(() => textareaRef.current?.focus(), 50);
   }
 
+  // Submit the draft text to the backend analysis pipeline and route to the results page.
   async function submit() {
     if (charCount < MIN_CHARS || isLoading) return;
     setPhase("analyzing");
@@ -125,7 +127,7 @@ function SubmitPage() {
       className="min-h-screen px-6 py-8"
       style={{ backgroundColor: "var(--background)" }}
     >
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto w-full max-w-5xl">
 
         {/* ── Page header ─────────────────────────────────────────────── */}
         <motion.div
@@ -144,7 +146,7 @@ function SubmitPage() {
         </motion.div>
 
         {/* ── Two-column layout ────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_340px]">
+        <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_340px]">
 
           {/* ── LEFT — Form ─────────────────────────────────────────────── */}
           <motion.div
@@ -161,6 +163,29 @@ function SubmitPage() {
                 transition: "opacity 0.3s ease",
               }}
             >
+              {phase === "idle" && charCount === 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 rounded-xl p-4"
+                  style={{ backgroundColor: "var(--accent-light)", border: "1px solid var(--accent-light-border)" }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full" style={{ backgroundColor: "var(--card)" }}>
+                      <Sparkles className="h-4 w-4" style={{ color: "var(--primary)" }} />
+                    </div>
+                    <div>
+                      <h2 className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+                        Start with context, not just a headline
+                      </h2>
+                      <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
+                        Paste a transaction note, due-diligence summary, or entity profile. The more details you include, the clearer the trust score and rationale will be.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Textarea */}
               <textarea
                 ref={textareaRef}
@@ -190,6 +215,39 @@ function SubmitPage() {
                 }}
               />
 
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 rounded-xl p-4"
+                  style={{ backgroundColor: "var(--input)", border: "1px solid var(--input-border)" }}
+                >
+                  <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+                    <Loader2 className="h-4 w-4 animate-spin" style={{ color: "var(--primary)" }} />
+                    Reviewing the context and scoring the risk signals
+                  </div>
+                  <div className="mt-3 grid gap-2 text-sm sm:grid-cols-3" style={{ color: "var(--muted-foreground)" }}>
+                    <div>• Checking the narrative</div>
+                    <div>• Weighting the strongest signals</div>
+                    <div>• Preparing a concise explanation</div>
+                  </div>
+                </motion.div>
+              )}
+
+              {phase === "result" && result && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 rounded-xl p-4"
+                  style={{ backgroundColor: "var(--accent-light)", border: "1px solid var(--accent-light-border)" }}
+                >
+                  <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+                    <Sparkles className="h-4 w-4" style={{ color: "var(--primary)" }} />
+                    Results are ready — opening your report now.
+                  </div>
+                </motion.div>
+              )}
+
               {/* Progress bar */}
               <div
                 className="mt-2 overflow-hidden rounded-full"
@@ -204,7 +262,7 @@ function SubmitPage() {
               </div>
 
               {/* Counter + submit row */}
-              <div className="mt-3 flex items-center justify-between">
+              <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <motion.span
                   className="data-mono text-xs tabular-nums"
                   style={{ color: counterColor }}
@@ -216,7 +274,7 @@ function SubmitPage() {
                   onClick={submit}
                   disabled={charCount < MIN_CHARS || isLoading || phase === "result"}
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold text-white"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold text-white sm:w-auto"
                   style={{
                     backgroundColor:
                       charCount < MIN_CHARS || phase === "result"
@@ -340,7 +398,7 @@ function SubmitPage() {
                 minHeight: 280,
               }}
             >
-              <div className="flex items-center gap-2 mb-4">
+              <div className="mb-4 flex items-center gap-2">
                 <div
                   className="flex h-7 w-7 items-center justify-center rounded-full"
                   style={{ backgroundColor: "var(--accent-light)" }}

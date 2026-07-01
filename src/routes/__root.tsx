@@ -8,7 +8,10 @@ import {
 import { useEffect } from "react";
 
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { ThemeProvider } from "@/hooks/use-theme";
 import { Toaster } from "@/components/ui/sonner";
+import { InstallPrompt } from "@/components/install-prompt";
+import { OfflineBanner } from "@/components/offline-banner";
 import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
@@ -103,13 +106,17 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AuthGate>
-          <AuthInvalidator />
-          <Outlet />
-          <Toaster />
-        </AuthGate>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AuthGate>
+            <AuthInvalidator />
+            <Outlet />
+            <OfflineBanner />
+            <InstallPrompt />
+            <Toaster />
+          </AuthGate>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
