@@ -19,8 +19,13 @@ export function InstallPrompt() {
   if (!visible || !deferredPrompt) return null;
 
   async function handleInstall() {
-    await deferredPrompt.prompt();
-    const choice = await deferredPrompt.userChoice;
+    if (!deferredPrompt) return;
+    const promptEvent = deferredPrompt;
+
+    await promptEvent.prompt();
+    const choice = await promptEvent.userChoice;
+
+    setDeferredPrompt(null); // the prompt can only be used once
     if (choice.outcome === "accepted") {
       setVisible(false);
     }
