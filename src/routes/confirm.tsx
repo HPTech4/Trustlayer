@@ -53,18 +53,18 @@ function ConfirmPage() {
   }, []);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#F3FAF5] px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4 py-12">
       <div className="w-full max-w-sm animate-slide-up">
 
         {/* Brand header */}
-        <div className="mb-8 flex flex-col items-center rounded-xl border border-emerald-900/10 bg-white p-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-600">
-            <Shield className="h-6 w-6 text-white" aria-hidden="true" />
+        <div className="mb-8 flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--card)] p-8">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--primary)]">
+            <Shield className="h-6 w-6 text-[var(--primary-foreground)]" aria-hidden="true" />
           </div>
-          <h1 className="mt-4 font-['Sora'] text-2xl font-bold text-slate-900">
+          <h1 className="mt-4 font-['Sora'] text-2xl font-bold text-[var(--foreground)]">
             TrustLayer
           </h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
             {status === "checking"
               ? "Verifying your email…"
               : status === "success"
@@ -75,9 +75,9 @@ function ConfirmPage() {
 
         {/* Checking */}
         {status === "checking" && (
-          <div className="flex flex-col items-center gap-4 rounded-xl border border-emerald-900/10 bg-white p-10 text-center">
-            <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
-            <p className="text-sm text-slate-500">
+          <div className="flex flex-col items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-10 text-center">
+            <Loader2 className="h-8 w-8 animate-spin text-[var(--primary)]" />
+            <p className="text-sm text-[var(--muted-foreground)]">
               Confirming your account, just a moment…
             </p>
           </div>
@@ -85,27 +85,27 @@ function ConfirmPage() {
 
         {/* Success */}
         {status === "success" && (
-          <div className="flex flex-col items-center gap-4 rounded-xl border border-emerald-900/10 bg-white p-10 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50">
-              <CheckCircle2 className="h-7 w-7 text-emerald-600" />
+          <div className="flex flex-col items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-10 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--risk-low-bg)]">
+              <CheckCircle2 className="h-7 w-7 text-[var(--risk-low)]" />
             </div>
             <div>
-              <p className="text-base font-semibold text-slate-900">
+              <p className="text-base font-semibold text-[var(--foreground)]">
                 Welcome to TrustLayer!
               </p>
-              <p className="mt-1.5 text-sm text-slate-500">
+              <p className="mt-1.5 text-sm text-[var(--muted-foreground)]">
                 Your email has been confirmed. You're all set to start analysing trust.
               </p>
             </div>
             <button
               onClick={() => navigate({ to: "/dashboard" })}
-              className="mt-2 w-full rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+              className="mt-2 w-full rounded-lg bg-[var(--primary)] px-4 py-3 text-sm font-semibold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--primary-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               Go to dashboard
             </button>
             <Link
               to="/login"
-              className="text-xs text-slate-400 transition-colors hover:text-emerald-700"
+              className="text-xs text-[var(--muted-foreground)] transition-colors hover:text-[var(--primary-dark)]"
             >
               Or sign in manually
             </Link>
@@ -114,21 +114,21 @@ function ConfirmPage() {
 
         {/* Error */}
         {status === "error" && (
-          <div className="flex flex-col items-center gap-4 rounded-xl border border-emerald-900/10 bg-white p-10 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-50">
-              <XCircle className="h-7 w-7 text-red-500" />
+          <div className="flex flex-col items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-10 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--risk-high-bg)]">
+              <XCircle className="h-7 w-7 text-[var(--risk-high)]" />
             </div>
             <div>
-              <p className="text-base font-semibold text-slate-900">
+              <p className="text-base font-semibold text-[var(--foreground)]">
                 Link invalid or expired
               </p>
-              <p className="mt-1.5 text-sm text-slate-500">
+              <p className="mt-1.5 text-sm text-[var(--muted-foreground)]">
                 {errorMessage ?? "This confirmation link has already been used or has expired."}
               </p>
             </div>
             <Link
               to="/login"
-              className="mt-2 inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+              className="mt-2 inline-flex w-full items-center justify-center rounded-lg bg-[var(--primary)] px-4 py-3 text-sm font-semibold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--primary-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               Back to sign in
             </Link>

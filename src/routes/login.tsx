@@ -21,10 +21,12 @@ type Mode = "signin" | "signup" | "forgot";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const inputClasses =
-  "mt-2 w-full rounded-lg border bg-[#F8FBF9] px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:bg-white focus-visible:ring-2 focus-visible:ring-emerald-500/40";
+  "mt-2 w-full rounded-lg border bg-[var(--input)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted-foreground)] focus:bg-[var(--card)] focus-visible:ring-2 focus-visible:ring-[var(--ring)]/40";
 
 const inputBorder = (hasError: boolean) =>
-  hasError ? "border-red-300 focus:border-red-500" : "border-emerald-900/10 focus:border-emerald-500";
+  hasError
+    ? "border-[var(--risk-high-border)] focus:border-[var(--risk-high)]"
+    : "border-[var(--input-border)] focus:border-[var(--input-focus)]";
 
 function validateEmail(value: string): string | undefined {
   if (!value.trim()) return "Enter your email.";
@@ -103,36 +105,36 @@ function LoginPage() {
     mode === "signin" ? "Sign in to your account" : mode === "signup" ? "Create an account" : "Reset your password";
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#F3FAF5] px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4 py-12">
       <div className="w-full max-w-sm animate-slide-up">
         <Link
           to="/"
-          className="mb-6 inline-flex items-center gap-1.5 rounded-sm text-sm font-medium text-emerald-700 transition-colors hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F3FAF5]"
+          className="mb-6 inline-flex items-center gap-1.5 rounded-sm text-sm font-medium text-[var(--primary)] transition-colors hover:text-[var(--primary-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Back to home
         </Link>
 
-        <div className="mb-8 flex flex-col items-center rounded-xl border border-emerald-900/10 bg-white p-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-600">
-            <Shield className="h-6 w-6 text-white" aria-hidden="true" />
+        <div className="mb-8 flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--card)] p-8">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--primary)]">
+            <Shield className="h-6 w-6 text-[var(--primary-foreground)]" aria-hidden="true" />
           </div>
-          <h1 className="mt-4 font-['Sora'] text-2xl font-bold text-slate-900">TrustLayer</h1>
-          <p className="mt-2 text-sm text-slate-500">{heading}</p>
+          <h1 className="mt-4 font-['Sora'] text-2xl font-bold text-[var(--foreground)]">TrustLayer</h1>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">{heading}</p>
         </div>
 
         {infoMessage ? (
           <div
             role="status"
-            className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+            className="mb-4 rounded-lg border border-[var(--risk-low-border)] bg-[var(--risk-low-bg)] px-4 py-3 text-sm text-[var(--risk-low)]"
           >
             {infoMessage}
           </div>
         ) : null}
 
-        <form onSubmit={submit} noValidate className="space-y-4 rounded-xl border border-emerald-900/10 bg-white p-8">
+        <form onSubmit={submit} noValidate className="space-y-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-8">
           <div>
-            <label htmlFor={emailId} className="text-sm font-medium text-slate-700">
+            <label htmlFor={emailId} className="text-sm font-medium text-[var(--foreground)]">
               Email
             </label>
             <input
@@ -151,7 +153,7 @@ function LoginPage() {
               placeholder="you@example.com"
             />
             {errors.email ? (
-              <p id={`${emailId}-error`} className="mt-1.5 text-xs text-red-600">
+              <p id={`${emailId}-error`} className="mt-1.5 text-xs text-[var(--risk-high)]">
                 {errors.email}
               </p>
             ) : null}
@@ -160,14 +162,14 @@ function LoginPage() {
           {mode !== "forgot" ? (
             <div>
               <div className="flex items-baseline justify-between">
-                <label htmlFor={passwordId} className="text-sm font-medium text-slate-700">
+                <label htmlFor={passwordId} className="text-sm font-medium text-[var(--foreground)]">
                   Password
                 </label>
                 {mode === "signin" ? (
                   <button
                     type="button"
                     onClick={() => switchMode("forgot")}
-                    className="rounded-sm text-xs font-medium text-emerald-700 transition-colors hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    className="rounded-sm text-xs font-medium text-[var(--primary)] transition-colors hover:text-[var(--primary-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
                   >
                     Forgot password?
                   </button>
@@ -192,11 +194,11 @@ function LoginPage() {
                 placeholder="••••••••"
               />
               {errors.password ? (
-                <p id={`${passwordId}-error`} className="mt-1.5 text-xs text-red-600">
+                <p id={`${passwordId}-error`} className="mt-1.5 text-xs text-[var(--risk-high)]">
                   {errors.password}
                 </p>
               ) : mode === "signup" ? (
-                <p id={`${passwordId}-hint`} className="mt-1.5 text-xs text-slate-500">
+                <p id={`${passwordId}-hint`} className="mt-1.5 text-xs text-[var(--muted-foreground)]">
                   At least 6 characters.
                 </p>
               ) : null}
@@ -206,7 +208,7 @@ function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-4 w-full rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-4 w-full rounded-lg bg-[var(--primary)] px-4 py-3 text-sm font-semibold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--primary-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading
               ? "Please wait…"
@@ -223,7 +225,7 @@ function LoginPage() {
             type="button"
             disabled={loading}
             onClick={() => switchMode("signin")}
-            className="mt-6 w-full rounded-sm text-center text-sm text-slate-500 transition-colors hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F3FAF5] disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-6 w-full rounded-sm text-center text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             Back to sign in
           </button>
@@ -232,7 +234,7 @@ function LoginPage() {
             type="button"
             disabled={loading}
             onClick={() => switchMode(mode === "signin" ? "signup" : "signin")}
-            className="mt-6 w-full rounded-sm text-center text-sm text-slate-500 transition-colors hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F3FAF5] disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-6 w-full rounded-sm text-center text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {mode === "signin" ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
           </button>

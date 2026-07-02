@@ -137,30 +137,33 @@ const SECURITY_CARDS = [
 
 type RiskLevel = "low" | "medium" | "high";
 
+/* Risk badge styling now maps to the shared --risk-* tokens defined in
+   index.css, so these automatically flip correctly in dark mode instead
+   of needing their own dark: overrides. */
 const RISK_STYLES: Record<
   RiskLevel,
   { ring: string; badgeBg: string; badgeBorder: string; badgeText: string; dot: string }
 > = {
   low: {
-    ring: "border-emerald-200",
-    badgeBg: "bg-emerald-50",
-    badgeBorder: "border-emerald-200",
-    badgeText: "text-emerald-700",
-    dot: "bg-emerald-500",
+    ring: "border-[var(--risk-low-border)]",
+    badgeBg: "bg-[var(--risk-low-bg)]",
+    badgeBorder: "border-[var(--risk-low-border)]",
+    badgeText: "text-[var(--risk-low)]",
+    dot: "bg-[var(--risk-low)]",
   },
   medium: {
-    ring: "border-amber-200",
-    badgeBg: "bg-amber-50",
-    badgeBorder: "border-amber-200",
-    badgeText: "text-amber-700",
-    dot: "bg-amber-500",
+    ring: "border-[var(--risk-medium-border)]",
+    badgeBg: "bg-[var(--risk-medium-bg)]",
+    badgeBorder: "border-[var(--risk-medium-border)]",
+    badgeText: "text-[var(--risk-medium)]",
+    dot: "bg-[var(--risk-medium)]",
   },
   high: {
-    ring: "border-red-200",
-    badgeBg: "bg-red-50",
-    badgeBorder: "border-red-200",
-    badgeText: "text-red-700",
-    dot: "bg-red-500",
+    ring: "border-[var(--risk-high-border)]",
+    badgeBg: "bg-[var(--risk-high-bg)]",
+    badgeBorder: "border-[var(--risk-high-border)]",
+    badgeText: "text-[var(--risk-high)]",
+    dot: "bg-[var(--risk-high)]",
   },
 };
 
@@ -253,7 +256,7 @@ const FOOTER_LINKS: { heading: string; links: { label: string; href: string }[] 
 
 function IconTile({
   icon: Icon,
-  className = "bg-emerald-50 text-emerald-600",
+  className = "bg-[var(--accent-light)] text-[var(--primary)]",
 }: {
   icon: typeof Shield;
   className?: string;
@@ -275,10 +278,10 @@ function FeatureCard({
   desc: string;
 }) {
   return (
-    <div className="rounded-2xl border border-emerald-900/10 bg-white p-7 transition-shadow hover:shadow-[0_10px_25px_rgba(16,185,129,0.12)]">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-7 transition-shadow hover:shadow-[0_10px_25px_rgba(16,185,129,0.12)]">
       <IconTile icon={icon} />
-      <div className="mt-5 text-lg font-semibold text-slate-900">{title}</div>
-      <div className="mt-2 text-base leading-relaxed text-slate-600">{desc}</div>
+      <div className="mt-5 text-lg font-semibold text-[var(--foreground)]">{title}</div>
+      <div className="mt-2 text-base leading-relaxed text-[var(--muted-foreground)]">{desc}</div>
     </div>
   );
 }
@@ -301,10 +304,10 @@ function VerdictCard({
     rotate === "left" ? "md:-rotate-3" : rotate === "right" ? "md:rotate-3" : "md:z-10";
   return (
     <div
-      className={`w-full max-w-sm rounded-2xl border ${s.ring} bg-white p-7 shadow-sm transition-transform hover:z-10 hover:scale-105 hover:rotate-0 md:-ml-6 md:first:ml-0 ${rotateClass}`}
+      className={`w-full max-w-sm rounded-2xl border ${s.ring} bg-[var(--card)] p-7 shadow-sm transition-transform hover:z-10 hover:scale-105 hover:rotate-0 md:-ml-6 md:first:ml-0 ${rotateClass}`}
     >
       <div className="mb-5 flex items-center justify-between">
-        <span className="font-mono text-4xl font-semibold text-slate-900" aria-hidden="true">
+        <span className="font-mono text-4xl font-semibold text-[var(--foreground)]" aria-hidden="true">
           {score}
         </span>
         <div
@@ -314,7 +317,7 @@ function VerdictCard({
           <span className={`font-mono text-sm ${s.badgeText}`}>{label}</span>
         </div>
       </div>
-      <p className="text-base leading-relaxed text-slate-600">
+      <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
         <span className="sr-only">Trust score {score} out of 100. </span>
         {desc}
       </p>
@@ -338,7 +341,7 @@ function AccordionItem({
   const panelId = `${id}-panel`;
   const buttonId = `${id}-trigger`;
   return (
-    <div className="border-b border-emerald-900/10">
+    <div className="border-b border-[var(--border)]">
       <h3>
         <button
           id={buttonId}
@@ -346,12 +349,12 @@ function AccordionItem({
           aria-expanded={isOpen}
           aria-controls={panelId}
           onClick={onToggle}
-          className="flex w-full items-center justify-between gap-4 py-5 text-left text-lg font-semibold text-slate-900 transition-colors hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F3FAF5] rounded-sm"
+          className="flex w-full items-center justify-between gap-4 py-5 text-left text-lg font-semibold text-[var(--foreground)] transition-colors hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-sm"
         >
           <span>{question}</span>
           <ChevronDown
             aria-hidden="true"
-            className={`h-5 w-5 shrink-0 text-emerald-600 transition-transform duration-200 ${
+            className={`h-5 w-5 shrink-0 text-[var(--primary)] transition-transform duration-200 ${
               isOpen ? "rotate-180" : ""
             }`}
           />
@@ -362,7 +365,7 @@ function AccordionItem({
         role="region"
         aria-labelledby={buttonId}
         hidden={!isOpen}
-        className="pb-5 pr-10 text-base leading-relaxed text-slate-600"
+        className="pb-5 pr-10 text-base leading-relaxed text-[var(--muted-foreground)]"
       >
         {answer}
       </div>
@@ -374,7 +377,7 @@ function Accordion({ items }: { items: { question: string; answer: string }[] })
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <div className="rounded-2xl border border-emerald-900/10 bg-white px-7">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-7">
       {items.map((item, idx) => (
         <AccordionItem
           key={item.question}
@@ -401,13 +404,13 @@ function SectionHeading({
   return (
     <div className="text-center">
       {eyebrow ? (
-        <div className="mb-3 font-mono text-sm font-semibold uppercase tracking-wider text-emerald-600">
+        <div className="mb-3 font-mono text-sm font-semibold uppercase tracking-wider text-[var(--primary)]">
           {eyebrow}
         </div>
       ) : null}
-      <h2 className="font-['Sora'] text-4xl font-extrabold text-slate-900">{title}</h2>
+      <h2 className="font-['Sora'] text-4xl font-extrabold text-[var(--foreground)]">{title}</h2>
       {subtitle ? (
-        <p className="mx-auto mt-3 max-w-xl text-lg text-slate-600">{subtitle}</p>
+        <p className="mx-auto mt-3 max-w-xl text-lg text-[var(--muted-foreground)]">{subtitle}</p>
       ) : null}
     </div>
   );
@@ -419,33 +422,33 @@ function SectionHeading({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-[#F3FAF5]">
+    <div className="min-h-screen bg-[var(--background)]">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-[var(--primary)] focus:px-4 focus:py-2 focus:text-[var(--primary-foreground)]"
       >
         Skip to main content
       </a>
 
       {/* Header */}
-      <header className="animate-slide-down border-b border-emerald-900/10 bg-[#F3FAF5]/80 backdrop-blur">
+      <header className="animate-slide-down border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600">
-              <Shield className="h-5 w-5 text-white" aria-hidden="true" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--primary)]">
+              <Shield className="h-5 w-5 text-[var(--primary-foreground)]" aria-hidden="true" />
             </div>
-            <span className="font-['Sora'] text-xl font-bold text-slate-900">TrustLayer</span>
+            <span className="font-['Sora'] text-xl font-bold text-[var(--foreground)]">TrustLayer</span>
           </div>
           <nav aria-label="Primary" className="flex items-center gap-4">
             <Link
               to="/login"
-              className="rounded-sm text-base font-medium text-emerald-700 transition-colors hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+              className="rounded-sm text-base font-medium text-[var(--primary)] transition-colors hover:text-[var(--primary-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               Sign in
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-5 py-2.5 text-base font-semibold text-white transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--primary)] px-5 py-2.5 text-base font-semibold text-[var(--primary-foreground)] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               Get started
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -456,7 +459,7 @@ function Landing() {
 
       <main id="main-content">
         {/* Hero */}
-        <section aria-labelledby="hero-heading" className="relative overflow-hidden border-b border-emerald-900/10">
+        <section aria-labelledby="hero-heading" className="relative overflow-hidden border-b border-[var(--border)]">
           <svg
             className="pointer-events-none absolute -right-24 top-10 hidden h-105 w-105 opacity-[0.07] lg:block"
             viewBox="0 0 200 200"
@@ -466,11 +469,11 @@ function Landing() {
           >
             <path
               d="M100 10 L170 35 V95 C170 140 140 170 100 190 C60 170 30 140 30 95 V35 Z"
-              fill="#10B981"
+              fill="var(--primary)"
             />
             <path
               d="M70 100 L92 122 L132 78"
-              stroke="#F3FAF5"
+              stroke="var(--background)"
               strokeWidth="10"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -484,14 +487,14 @@ function Landing() {
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
           >
-            <circle cx="100" cy="100" r="90" stroke="#10B981" strokeWidth="6" fill="none" />
-            <circle cx="100" cy="100" r="55" stroke="#10B981" strokeWidth="6" fill="none" />
+            <circle cx="100" cy="100" r="90" stroke="var(--primary)" strokeWidth="6" fill="none" />
+            <circle cx="100" cy="100" r="55" stroke="var(--primary)" strokeWidth="6" fill="none" />
           </svg>
 
           <div className="relative mx-auto max-w-4xl px-6 py-14 sm:py-20">
             <div className="animate-fade-in flex justify-center">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-100/60 px-5 py-2.5 text-base text-emerald-700 animate-pulse-glow">
-                <span className="h-2 w-2 rounded-full bg-emerald-600" aria-hidden="true" />
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--accent-light-border)] bg-[var(--accent-light)] px-5 py-2.5 text-base text-[var(--primary)] animate-pulse-glow">
+                <span className="h-2 w-2 rounded-full bg-[var(--primary)]" aria-hidden="true" />
                 Powered by Gemini 2.5 Flash
               </div>
             </div>
@@ -499,15 +502,15 @@ function Landing() {
             <div className="animate-slide-up text-center">
               <h1
                 id="hero-heading"
-                className="font-['Sora'] text-3xl font-extrabold tracking-tight text-slate-900 sm:text-6xl md:text-7xl lg:text-4xl"
+                className="font-['Sora'] text-3xl font-extrabold tracking-tight text-[var(--foreground)] sm:text-6xl md:text-7xl lg:text-4xl"
               >
                 Is that link safe?
                 <br />
-                Find out — <span className="text-emerald-600">instantly.</span>
+                Find out — <span className="text-[var(--primary)]">instantly.</span>
               </h1>
             </div>
 
-            <p className="animate-slide-up delay-100 mx-auto mt-8 max-w-2xl text-center text-base text-slate-600 sm:text-lg md:text-xl">
+            <p className="animate-slide-up delay-100 mx-auto mt-8 max-w-2xl text-center text-base text-[var(--muted-foreground)] sm:text-lg md:text-xl">
               Most scam detectors give you a warning and nothing else. TrustLayer
               gives you a trust score, a risk level, and a plain-English
               explanation of exactly what it found — in seconds.
@@ -517,56 +520,56 @@ function Landing() {
               <div className="flex flex-wrap justify-center gap-4">
                 <Link
                   to="/login"
-                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:px-9 sm:py-4 sm:text-lg"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[var(--primary)] px-6 py-3 text-base font-semibold text-[var(--primary-foreground)] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 sm:px-9 sm:py-4 sm:text-lg"
                 >
                   Get started
                   <ArrowRight className="h-5 w-5" aria-hidden="true" />
                 </Link>
                 <Link
                   to="/login"
-                  className="inline-flex items-center gap-2 rounded-lg border border-emerald-300 bg-white px-6 py-3 text-base font-semibold text-emerald-700 transition-colors hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:px-9 sm:py-4 sm:text-lg"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--accent-light-border)] bg-[var(--card)] px-6 py-3 text-base font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--accent-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 sm:px-9 sm:py-4 sm:text-lg"
                 >
                   Sign in
                 </Link>
               </div>
-              <span className="text-base text-slate-600">
+              <span className="text-base text-[var(--muted-foreground)]">
                 Free to get started — no credit card required.
               </span>
             </div>
 
             {/* Live demo card: now shows the actual pipeline, not just the end state */}
-            <div className="animate-slide-up delay-300 mx-auto mt-14 max-w-xl overflow-hidden rounded-xl border border-emerald-900/10 bg-white text-left shadow-sm">
-              <div className="border-b border-emerald-900/10 px-6 py-4 text-sm text-slate-500">
+            <div className="animate-slide-up delay-300 mx-auto mt-14 max-w-xl overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] text-left shadow-sm">
+              <div className="border-b border-[var(--border)] px-6 py-4 text-sm text-[var(--muted-foreground)]">
                 Sample submission
               </div>
-              <div className="px-6 py-5 font-mono text-base leading-relaxed text-slate-700">
+              <div className="px-6 py-5 font-mono text-base leading-relaxed text-[var(--foreground)]">
                 "secure-bankverify-update.com — Urgent: your account will be
                 suspended in 24 hours, click to verify your details..."
               </div>
 
-              <ol className="grid grid-cols-1 divide-y divide-emerald-900/10 border-t border-emerald-900/10 sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
+              <ol className="grid grid-cols-1 divide-y divide-[var(--border)] border-t border-[var(--border)] sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
                 <li className="flex items-center gap-3 px-6 py-4">
-                  <Cpu className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
-                  <span className="text-sm text-slate-600">Gemini 2.5 Flash analyzes the text and link</span>
+                  <Cpu className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
+                  <span className="text-sm text-[var(--muted-foreground)]">Gemini 2.5 Flash analyzes the text and link</span>
                 </li>
                 <li className="flex items-center gap-3 px-6 py-4">
-                  <Gauge className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
-                  <span className="text-sm text-slate-600">A 0–100 trust score is calculated</span>
+                  <Gauge className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
+                  <span className="text-sm text-[var(--muted-foreground)]">A 0–100 trust score is calculated</span>
                 </li>
                 <li className="flex items-center gap-3 px-6 py-4">
-                  <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
-                  <span className="text-sm text-slate-600">You get a verdict and the reasoning</span>
+                  <ShieldCheck className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
+                  <span className="text-sm text-[var(--muted-foreground)]">You get a verdict and the reasoning</span>
                 </li>
               </ol>
 
-              <div className="flex items-center justify-between border-t border-emerald-900/10 px-6 py-5">
+              <div className="flex items-center justify-between border-t border-[var(--border)] px-6 py-5">
                 <div>
-                  <div className="mb-1 text-sm text-slate-500">Trust score</div>
-                  <div className="font-mono text-3xl font-semibold text-slate-900">8</div>
+                  <div className="mb-1 text-sm text-[var(--muted-foreground)]">Trust score</div>
+                  <div className="font-mono text-3xl font-semibold text-[var(--foreground)]">8</div>
                 </div>
-                <div className="flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-red-500" aria-hidden="true" />
-                  <span className="font-mono text-sm text-red-700">High risk</span>
+                <div className="flex items-center gap-2 rounded-full border border-[var(--risk-high-border)] bg-[var(--risk-high-bg)] px-4 py-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--risk-high)]" aria-hidden="true" />
+                  <span className="font-mono text-sm text-[var(--risk-high)]">High risk</span>
                 </div>
               </div>
             </div>
@@ -575,15 +578,15 @@ function Landing() {
 
         {/* Tech trust strip — replaces fabricated company logos with real,
             verifiable claims about how the product is built. */}
-        <section aria-label="Built on" className="border-b border-emerald-900/10 bg-white">
+        <section aria-label="Built on" className="border-b border-[var(--border)] bg-[var(--card)]">
           <div className="mx-auto max-w-5xl px-6 py-10">
-            <p className="text-center text-xs font-medium uppercase tracking-wider text-slate-500">
+            <p className="text-center text-xs font-medium uppercase tracking-wider text-[var(--muted-foreground)]">
               Built on technology you can verify
             </p>
             <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
               {TECH_TRUST_ITEMS.map((item) => (
-                <li key={item.label} className="flex items-center gap-2 text-slate-700">
-                  <item.icon className="h-5 w-5 text-emerald-600" aria-hidden="true" />
+                <li key={item.label} className="flex items-center gap-2 text-[var(--foreground)]">
+                  <item.icon className="h-5 w-5 text-[var(--primary)]" aria-hidden="true" />
                   <span className="font-['Sora'] text-base font-semibold">{item.label}</span>
                 </li>
               ))}
@@ -592,7 +595,7 @@ function Landing() {
         </section>
 
         {/* Differentiation / positioning */}
-        <section className="border-b border-emerald-900/10">
+        <section className="border-b border-[var(--border)]">
           <div className="mx-auto max-w-5xl px-6 py-20">
             <SectionHeading
               eyebrow="Why TrustLayer"
@@ -608,7 +611,7 @@ function Landing() {
         </section>
 
         {/* How it works */}
-        <section id="how-it-works" aria-labelledby="how-it-works-heading" className="border-b border-emerald-900/10">
+        <section id="how-it-works" aria-labelledby="how-it-works-heading" className="border-b border-[var(--border)]">
           <div className="mx-auto max-w-5xl px-6 py-20">
             <h2 id="how-it-works-heading" className="sr-only">
               How it works
@@ -618,12 +621,12 @@ function Landing() {
             <ol className="mt-14 grid grid-cols-1 gap-10 md:grid-cols-3">
               {HOW_IT_WORKS_STEPS.map((s, idx) => (
                 <li key={s.title} className="text-center">
-                  <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50">
-                    <s.icon className="h-7 w-7 text-emerald-600" aria-hidden="true" />
+                  <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent-light)]">
+                    <s.icon className="h-7 w-7 text-[var(--primary)]" aria-hidden="true" />
                   </div>
-                  <div className="mb-1 font-mono text-sm text-slate-500">Step {idx + 1}</div>
-                  <div className="mb-2 text-lg font-semibold text-slate-900">{s.title}</div>
-                  <div className="text-base leading-relaxed text-slate-600">{s.desc}</div>
+                  <div className="mb-1 font-mono text-sm text-[var(--muted-foreground)]">Step {idx + 1}</div>
+                  <div className="mb-2 text-lg font-semibold text-[var(--foreground)]">{s.title}</div>
+                  <div className="text-base leading-relaxed text-[var(--muted-foreground)]">{s.desc}</div>
                 </li>
               ))}
             </ol>
@@ -631,7 +634,7 @@ function Landing() {
         </section>
 
         {/* Features */}
-        <section id="features" aria-labelledby="features-heading" className="border-b border-emerald-900/10 bg-white">
+        <section id="features" aria-labelledby="features-heading" className="border-b border-[var(--border)] bg-[var(--card)]">
           <div className="mx-auto max-w-5xl px-6 py-20">
             <h2 id="features-heading" className="sr-only">
               Features
@@ -645,7 +648,7 @@ function Landing() {
         </section>
 
         {/* Sample verdicts */}
-        <section aria-labelledby="verdicts-heading" className="border-b border-emerald-900/10">
+        <section aria-labelledby="verdicts-heading" className="border-b border-[var(--border)]">
           <div className="mx-auto max-w-5xl px-6 py-20">
             <h2 id="verdicts-heading" className="sr-only">
               Sample verdicts
@@ -668,13 +671,13 @@ function Landing() {
         </section>
 
         {/* Security & privacy */}
-        <section id="security" aria-labelledby="security-heading" className="border-b border-emerald-900/10 bg-white">
+        <section id="security" aria-labelledby="security-heading" className="border-b border-[var(--border)] bg-[var(--card)]">
           <div className="mx-auto max-w-5xl px-6 py-20">
             <SectionHeading
               eyebrow="Security & privacy"
               title="Your data stays yours."
             />
-            <p className="mx-auto mt-3 max-w-2xl text-center text-lg text-slate-600">
+            <p className="mx-auto mt-3 max-w-2xl text-center text-lg text-[var(--muted-foreground)]">
               Anything you submit — a link, a message, a transaction — is scoped
               to your account from the database up. Nobody else can read it,
               and we don't monetize it.
@@ -691,15 +694,15 @@ function Landing() {
         {/* Why trust TrustLayer — compact strip, deliberately lighter-weight
             than the Security section above so the two don't read as the
             same content twice. */}
-        <section aria-labelledby="why-trust-heading" className="border-b border-emerald-900/10">
+        <section aria-labelledby="why-trust-heading" className="border-b border-[var(--border)]">
           <div className="mx-auto max-w-5xl px-6 py-16">
             <h2 id="why-trust-heading" className="sr-only">
               Why teams trust TrustLayer
             </h2>
             <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
               {WHY_TRUST_POINTS.map((p) => (
-                <li key={p.label} className="flex items-center gap-2 text-slate-700">
-                  <p.icon className="h-5 w-5 text-emerald-600" aria-hidden="true" />
+                <li key={p.label} className="flex items-center gap-2 text-[var(--foreground)]">
+                  <p.icon className="h-5 w-5 text-[var(--primary)]" aria-hidden="true" />
                   <span className="text-base font-medium">{p.label}</span>
                 </li>
               ))}
@@ -708,9 +711,9 @@ function Landing() {
         </section>
 
         {/* FAQ */}
-        <section aria-labelledby="faq-heading" className="border-b border-emerald-900/10 bg-white">
+        <section aria-labelledby="faq-heading" className="border-b border-[var(--border)] bg-[var(--card)]">
           <div className="mx-auto max-w-3xl px-6 py-20">
-            <h2 id="faq-heading" className="text-center font-['Sora'] text-4xl font-extrabold text-slate-900">
+            <h2 id="faq-heading" className="text-center font-['Sora'] text-4xl font-extrabold text-[var(--foreground)]">
               Frequently asked questions
             </h2>
             <div className="mt-12">
@@ -721,19 +724,19 @@ function Landing() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white">
+      <footer className="bg-[var(--card)]">
         <div className="mx-auto max-w-6xl px-6 py-14">
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
             <div className="col-span-2 sm:col-span-1">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-600">
-                  <Shield className="h-4 w-4 text-white" aria-hidden="true" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[var(--primary)]">
+                  <Shield className="h-4 w-4 text-[var(--primary-foreground)]" aria-hidden="true" />
                 </div>
-                <span className="font-['Sora'] text-base font-bold text-slate-900">TrustLayer</span>
+                <span className="font-['Sora'] text-base font-bold text-[var(--foreground)]">TrustLayer</span>
               </div>
               <a
                 href="mailto:hello@trustlayer.app"
-                className="mt-4 inline-flex items-center gap-2 rounded-sm text-sm text-slate-600 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                className="mt-4 inline-flex items-center gap-2 rounded-sm text-sm text-[var(--muted-foreground)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
               >
                 <Mail className="h-4 w-4" aria-hidden="true" />
                 hello@trustlayer.app
@@ -742,7 +745,7 @@ function Landing() {
 
             {FOOTER_LINKS.map((col) => (
               <nav key={col.heading} aria-label={col.heading}>
-                <div className="font-['Sora'] text-sm font-semibold text-slate-900">
+                <div className="font-['Sora'] text-sm font-semibold text-[var(--foreground)]">
                   {col.heading}
                 </div>
                 <ul className="mt-3 space-y-2">
@@ -750,7 +753,7 @@ function Landing() {
                     <li key={link.label}>
                       <a
                         href={link.href}
-                        className="rounded-sm text-sm text-slate-600 transition-colors hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                        className="rounded-sm text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
                       >
                         {link.label}
                       </a>
@@ -761,7 +764,7 @@ function Landing() {
             ))}
           </div>
 
-          <div className="mt-12 border-t border-emerald-900/10 pt-6 text-center text-sm text-slate-500">
+          <div className="mt-12 border-t border-[var(--border)] pt-6 text-center text-sm text-[var(--muted-foreground)]">
             © {new Date().getFullYear()} TrustLayer. All rights reserved.
           </div>
         </div>
