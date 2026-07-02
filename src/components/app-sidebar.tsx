@@ -11,8 +11,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/hooks/use-theme";
+import { useState } from "react";
 
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -26,6 +38,7 @@ export function AppSidebar() {
   const { user, signOut } = useAuth();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const [signingOut, setSigningOut] = useState(false);
 
   const activeBg = isDark ? "var(--sidebar-accent)" : "#EEF2FF";
   const activeColor = isDark ? "var(--sidebar-accent-foreground)" : "var(--accent)";
@@ -33,10 +46,28 @@ export function AppSidebar() {
   const hoverBg = isDark ? "rgba(79, 220, 143, 0.16)" : "#F8F9FC";
   const hoverColor = isDark ? "var(--sidebar-foreground)" : "#374151";
 
+  const handleSignOut = async () => {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await signOut();
+    } finally {
+      setSigningOut(false);
+    }
+  };
+
   return (
     <Sidebar
       collapsible="none"
-      style={{ backgroundColor: "var(--sidebar)", borderRight: "1px solid var(--sidebar-border)" }}
+      style={{
+        backgroundColor: "var(--sidebar)",
+        borderRight: "1px solid var(--sidebar-border)",
+        // Pin the sidebar to the viewport so it doesn't scroll with main content.
+        position: "sticky",
+        top: 0,
+        height: "100vh",
+        overflowY: "auto",
+      }}
       className="w-72"
     >
       <SidebarHeader>
@@ -60,15 +91,15 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={path === item.url} 
+                  <SidebarMenuButton
+                    asChild
+                    isActive={path === item.url}
                     tooltip={item.title}
                     style={{
-                      backgroundColor: path === item.url ? activeBg : 'transparent',
+                      backgroundColor: path === item.url ? activeBg : "transparent",
                       color: path === item.url ? activeColor : inactiveColor,
-                      borderLeft: path === item.url ? '3px solid var(--sidebar-primary)' : 'none',
-                      cursor: 'pointer'
+                      borderLeft: path === item.url ? "3px solid var(--sidebar-primary)" : "none",
+                      cursor: "pointer",
                     }}
                     onMouseEnter={(e) => {
                       if (path !== item.url) {
@@ -78,7 +109,7 @@ export function AppSidebar() {
                     }}
                     onMouseLeave={(e) => {
                       if (path !== item.url) {
-                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.backgroundColor = "transparent";
                         e.currentTarget.style.color = inactiveColor;
                       }
                     }}
@@ -96,18 +127,42 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className="px-6 pb-6" style={{ borderTop: "1px solid var(--sidebar-border)", paddingTop: "8px" }}>
-          <div className="truncate text-xs" style={{ color: "var(--muted-foreground)" }}>{user?.email}</div>
-          <button
-            onClick={() => signOut()}
-            className="mt-3 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-smooth animate-slide-down"
-            style={{
-              backgroundColor: "var(--danger)",
-              color: "white",
-              cursor: "pointer",
-            }}
-          >
-            <LogOut className="h-4 w-4" /> Sign out
-          </button>
+          <div className="truncate text-xs" style={{ color: "var(--muted-foreground)" }}>
+            {user?.email ?? "Loading..."}
+          </div>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button
+                className="mt-3 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-smooth animate-slide-down"
+                style={{
+                  backgroundColor: "var(--danger)",
+                  color: "white",
+                  cursor: "pointer",
+                }}
+              >
+                <LogOut className="h-4 w-4" /> Sign out
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  You'll need to sign in again to access your dashboard and submission history.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={signingOut}>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleSignOut}
+                  disabled={signingOut}
+                  style={{ backgroundColor: "var(--danger)" }}
+                >
+                  {signingOut ? "Signing out..." : "Sign out"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </SidebarFooter>
     </Sidebar>
